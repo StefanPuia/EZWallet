@@ -3,9 +3,12 @@
 // load the configuration file
 const config = require('./app/config');
 
+// load authentication config
+const passport = require('./app/config/passport');
+
 // initialize and start the express app
 const express = require('./app/core/express');
-express.start();
+express.start(passport);
 const app = express.getApp();
 
 // start the express api
@@ -24,3 +27,5 @@ app.get(/.*/, function(req, res) {
 app.listen(config.serverPort, function() {
     console.log(`Listening on ${config.serverPort}.`);
 });
+
+
