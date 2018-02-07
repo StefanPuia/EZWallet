@@ -4,8 +4,8 @@
   "description": "weekly budget tracking app",
   "main": "app/core/server.js",
   "scripts": {
-    "test": "node app/core/server.js",
-    "server": "node app/core/server.js"
+    "test": "node index",
+    "server": "node index"
   },
   "repository": {
     "type": "git",
