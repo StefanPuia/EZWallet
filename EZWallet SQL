@@ -1,0 +1,51 @@
+
+create database EZWallet;
+
+create table user (
+  id int primary key auto_increment,
+  fname varchar(20) not null,
+  lname varchar(20) not null,
+  username varchar(20) not null,
+  email varchar(20) not null,
+  token varchar(500) not null,
+  budget int not null
+);
+
+create table category (
+  id int primary key auto_increment,
+  cname varchar(20) not null,
+  icon varchar(100)
+);
+
+create table transaction (
+  id int primary key auto_increment,
+  user int not null,
+  amount int not null,
+  description varchar(100),
+  tdate date not null,
+  category int not null,
+  image varchar(200),
+  foreign key(category) references category(id),
+  foreign key(user) references user(id)
+);
+insert into user(fname, lname, username, email, token, budget) values ('James', 'Coyle', 'JCoyle', 'jamescoyle@mail.com', '123456', 40);
+insert into user(fname, lname, username, email, token, budget) values ('John', 'Smith', 'JSmith', 'johnsmith@mail.com', '654321', 100);
+
+insert into category(cname) values ('groceries');
+insert into category(cname) values ('transport');
+
+insert into transaction(user, amount, description, tdate, category, image) values (1, 20, 'shopping', '2018/01/01', 1);
+insert into transaction(user, amount, description, tdate, category, image) values (1, 15, 'travel', '2017/11/12', 3);
+
+select amount, description, tdate, category, image
+  from transaction, user
+  where user = 1
+  order by tdate asc;
+
+select tname, amount, description, tdate, category, image
+  from transaction, user
+  where user = 1
+  order by tdate desc;
+
+update user set budget = 50
+  where id = 1;
