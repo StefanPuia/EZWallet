@@ -65,7 +65,7 @@ module.exports.start = function(passport) {
         passport.authenticate( 'google', {
             failureRedirect: '/login'
         }), function (req, res) {
-            res.redirect('/?usertoken=' + req.user.token);
+            res.redirect('/?usertoken=' + req.user.token + '&user=' + req.user.token);
         }
     );
 }

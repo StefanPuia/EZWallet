@@ -13,6 +13,13 @@ module.exports = {
 		'password': 'cPxD5B8pyY4G'
 	},
 
+	'database2': {
+		'host': '35.205.83.16',
+		'database': 'inse',
+		'user': 'root',
+		'password': 'root'
+	},
+
 	// views directory
 	'views': path.join(__dirname, '/../views'),
 
