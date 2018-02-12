@@ -1,10 +1,13 @@
 'use strict';
 
-// initialize the express app
+// initialise the express app
 const express = require('express');
 const app = express();
 
-// initialize the configuration file
+// initialise the sha256 module
+const sha256 = require('sha256');
+
+// initialise the configuration file
 const config = require('./../config');
 
 /**
@@ -19,9 +22,7 @@ module.exports.getApp = function() {
  * start the express server
  */
 module.exports.start = function(passport) {
-    /**
-     * serve all files from the public directory on the /public path
-     */
+    //serve all files from the public directory on the /public path
     app.use('/public', express.static('public'));
 
     // set the view engine and the view folder
@@ -37,7 +38,7 @@ module.exports.start = function(passport) {
      * serve landing page
      */
     app.get('/', function(req, res) {
-        res.status(200).send('It\'s working!');;
+        res.status(200).render('index');
     });
 
     /**
@@ -61,9 +62,11 @@ module.exports.start = function(passport) {
      * handle the authentication callback from google
      */
     app.get( '/auth/google/callback', 
-        passport.authenticate( 'google', { 
-            successRedirect: '/',
+        passport.authenticate( 'google', {
             failureRedirect: '/login'
-    }));
+        }), function (req, res) {
+            res.redirect('/?usertoken=' + req.user.token);
+        }
+    );
 }
 

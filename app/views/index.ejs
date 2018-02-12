@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Index</title>
+</head>
+<body>
+	<h1>It's working!</h1>
+	<a id="loginbutton" href="login">Login</a>
+	<a id="logoutbutton" href="#">Logout</a>
+	<p id="userdetails"></p>
+
+	<script>
+		function getQueryString(field, url) {
+		    var href = url ? url : window.location.href;
+		    var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+		    var string = reg.exec(href);
+		    return string ? string[1] : null;
+		};
+
+		function $(query) {
+			return document.querySelector(query);
+		}
+
+		if(localStorage.usertoken != 'null' && localStorage.usertoken != undefined) {
+			$('#loginbutton').style.display = 'none';
+		}
+		else {
+			$('#logoutbutton').style.display = 'none';
+		}
+
+		$('#logoutbutton').addEventListener('click', function() {
+			$('#logoutbutton').style.display = 'none';
+			$('#loginbutton').style.display = '';
+			delete localStorage.usertoken;
+		})
+
+		window.addEventListener('load', async function() {
+			if(localStorage.usertoken == 'null' || localStorage.usertoken == undefined) {
+				localStorage.setItem('usertoken', getQueryString('usertoken'));
+			}
+
+			const response = await fetch('/api/user/' + getQueryString('user') + '?token=' + localStorage.usertoken);
+			if(response.ok) {
+				const data = await response.json();
+				$('#userdetails').textContent = JSON.stringify(data, null, 4);
+			}
+			else {
+				$('#userdetails').textContent = 'not found';
+			}
+			
+		})
+	</script>
+</body>
+</html>

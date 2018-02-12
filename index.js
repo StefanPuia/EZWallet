@@ -16,12 +16,11 @@ const api = require('./app/core/api')(app);
 
 /**
  * GET *
- * @param  {Object} req  express request object
- * @param  {Object} res  express response object
+ * get any undefined route responds with 404
  */
-app.get(/.*/, function(req, res) {
-    res.status(404).send(`There is no "${req.path}" here!`);
-});
+app.use(function (req, res, next) {
+  res.status(404).send(`There is no "${req.path}" here!`)
+})
 
 // start listening on the specified port
 app.listen(config.serverPort, function() {

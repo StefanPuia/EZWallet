@@ -6,6 +6,9 @@ const config = require('./index');
 // load utility functions
 const util = require('./../core/utility');
 
+// load sha256 module
+const sha256 = require('sha256');
+
 // load authentication module
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -17,7 +20,7 @@ passport.use(new GoogleStrategy({
         callbackURL: config.googleAuth.callbackURL
     },
     function(accessToken, refreshToken, profile, done) {
-        util.findOrCreate(profile._json, function(err, user) {
+        util.findOrCreate(profile, function(err, user) {
             return done(err, user);
         });
     }

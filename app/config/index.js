@@ -7,9 +7,9 @@ const path = require('path');
 module.exports = {
 	// database connection config
 	'database': {
-		'host': 'mysql.hostinger.ro',
+		'host': 'sql35.main-hosting.eu',
 		'database': 'u619707583_inse',
-		'username': 'u619707583_root',
+		'user': 'u619707583_root',
 		'password': 'cPxD5B8pyY4G'
 	},
 
