@@ -23,7 +23,7 @@ module.exports.getApp = function() {
  */
 module.exports.start = function(passport) {
     //serve all files from the public directory on the /public path
-    app.use('/public', express.static('public'));
+    app.use(config.public.routed, express.static(config.public.local));
 
     // set the view engine and the view folder
     app.set('view engine', 'ejs');
@@ -68,5 +68,7 @@ module.exports.start = function(passport) {
             res.redirect('/?usertoken=' + req.user.token + '&user=' + req.user.token);
         }
     );
+
+    
 }
 

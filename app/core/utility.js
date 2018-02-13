@@ -42,9 +42,8 @@ module.exports.query = function(query, values, callback) {
 
 // placeholder function
 module.exports.findOrCreate = function(profile, callback) {
-    const token = sha256("google" + profile.id);
     let sql = "SELECT * FROM ?? WHERE ?? = ?";
-    let inserts = ['user', 'token', token];
+    let inserts = ['user', 'email', profile.emails[0].value];
     sql = mysql.format(sql, inserts);
 
     mysqlConnection.query(sql, function(error, results, fields) {
@@ -57,13 +56,11 @@ module.exports.findOrCreate = function(profile, callback) {
                 fname: profile.name.givenName,
                 lname: profile.name.familyName,
                 email: profile.emails[0].value,
-                token: token,
                 budget: 0
             })
             callback(null, false)
         } else {
             callback(null, results[0]);
-            console.log(results[0]);
         }
     })
 }

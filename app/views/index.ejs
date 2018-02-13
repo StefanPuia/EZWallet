@@ -1,56 +1,28 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Index</title>
+	<title>EZWallet</title>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<meta name="google-signin-client_id" content="16592814341-srr33lj6et1lj5ls0dj4v73q495khfko.apps.googleusercontent.com">
 </head>
-<body>
-	<h1>It's working!</h1>
-	<a id="loginbutton" href="login">Login</a>
-	<a id="logoutbutton" href="#">Logout</a>
-	<p id="userdetails"></p>
-
-	<script>
-		function getQueryString(field, url) {
-		    var href = url ? url : window.location.href;
-		    var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
-		    var string = reg.exec(href);
-		    return string ? string[1] : null;
-		};
-
-		function $(query) {
-			return document.querySelector(query);
-		}
-
-		if(localStorage.usertoken != 'null' && localStorage.usertoken != undefined) {
-			$('#loginbutton').style.display = 'none';
-		}
-		else {
-			$('#logoutbutton').style.display = 'none';
-		}
-
-		$('#logoutbutton').addEventListener('click', function() {
-			$('#logoutbutton').style.display = 'none';
-			$('#loginbutton').style.display = '';
-			delete localStorage.usertoken;
-		})
-
-		window.addEventListener('load', async function() {
-			if(localStorage.usertoken == 'null' || localStorage.usertoken == undefined) {
-				localStorage.setItem('usertoken', getQueryString('usertoken'));
-			}
-
-			const response = await fetch('/api/user/' + getQueryString('user') + '?token=' + localStorage.usertoken);
-			if(response.ok) {
-				const data = await response.json();
-				$('#userdetails').textContent = JSON.stringify(data, null, 4);
-			}
-			else {
-				$('#userdetails').textContent = 'not found';
-			}
-			
-		})
-	</script>
+<body style="display:none">
+	<h1>EZWallet<span id="greeting"></span></h1>
+	
+	<p><div id="button-google-signin" class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+	<a id="button-signout" href="#" onclick="signOut();">Sign out</a></p>
+	
+	<p>Below is the response from the server API: </p>
+	<label><input type="checkbox" id="user_id">ID</label><br>
+	<label><input type="checkbox" id="user_lname">lName</label><br>
+	<label><input type="checkbox" checked id="user_fname">fName</label><br>
+	<label><input type="checkbox" checked id="user_email">email</label><br>
+	<label><input type="checkbox" id="user_budget">budget</label><br>
+	<input type="number" id="userid" value="1" placeholder="user id"><br>
+	<button onclick="getDetails()">get user details by id</button>
+	<button onclick="getOwnDetails()">get own details</button>
+	<button onclick="getBudget()">get own budget</button>
+	<br><br>
+	<input type="text" id="user_input" placeholder="input"><br>
+	<button onclick="setBudget()">set own budget</button>
+	<pre id="server-response" style="border: 1px dashed black; min-width: 10em; min-height: 1em; padding: .5em;"></pre>
+	<script src="public/client.js"></script>
 </body>
-</html>

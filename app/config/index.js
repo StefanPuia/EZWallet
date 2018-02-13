@@ -20,6 +20,11 @@ module.exports = {
 		'password': 'root'
 	},
 
+	'public': {
+		'local': path.join(__dirname, '/../../public'),
+		'routed': '/public'
+	},
+
 	// views directory
 	'views': path.join(__dirname, '/../views'),
 
