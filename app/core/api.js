@@ -105,7 +105,7 @@ module.exports = function(app) {
 
     app.delete('/api/transation/:id', function(res,req){
         if(req.user){
-            util.query('DELETE FROM transation WHERE ?? = ? AND ?? = ?', ['id', req.perams.id, 'email', req.user.emails[0].value] function(results){
+            util.query('DELETE FROM transation WHERE ?? = ? AND ?? = ?', ['id', req.perams.id, 'email', req.user.emails[0].value], function(results){
                 res.sendStatus(204);
             });
         }
