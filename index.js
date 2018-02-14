@@ -14,6 +14,9 @@ const app = express.getApp();
 // start the express api
 const api = require('./app/core/api')(app);
 
+//logging all requests to console
+app.use('/', (req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
+
 /**
  * GET *
  * get any undefined route responds with 404
@@ -26,5 +29,3 @@ app.use(function (req, res, next) {
 app.listen(config.serverPort, function() {
     console.log(`Listening on ${config.serverPort}.`);
 });
-
-
