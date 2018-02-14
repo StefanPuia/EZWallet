@@ -21,17 +21,13 @@ module.exports.getApp = function() {
 /**
  * start the express server
  */
-module.exports.start = function(passport) {
+module.exports.start = function() {
     //serve all files from the public directory on the /public path
     app.use(config.public.routed, express.static(config.public.local));
 
     // set the view engine and the view folder
     app.set('view engine', 'ejs');
     app.set('views', config.views);
-
-    // use the passport middleware
-    app.use(passport.initialize());
-    app.use(passport.session());
 
     /**
      * GET /
@@ -47,28 +43,6 @@ module.exports.start = function(passport) {
      */
     app.get('/login', function(req, res) {
         res.status(200).render('login')
-    })
-
-    /**
-     * GET /auth/google
-     * send authentication request to google oauth server
-     */
-    app.get('/auth/google', passport.authenticate('google', {
-        scope: ['email', 'profile']
-    }));
-
-    /**
-     * GET /auth/google/callback
-     * handle the authentication callback from google
-     */
-    app.get( '/auth/google/callback', 
-        passport.authenticate( 'google', {
-            failureRedirect: '/login'
-        }), function (req, res) {
-            res.redirect('/?usertoken=' + req.user.token + '&user=' + req.user.token);
-        }
-    );
-
-    
+    })    
 }
 

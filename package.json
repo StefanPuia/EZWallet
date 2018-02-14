@@ -22,8 +22,6 @@
     "ejs": "^2.5.7",
     "express": "^4.16.2",
     "mysql": "^2.15.0",
-    "passport": "^0.4.0",
-    "passport-google-oauth": "^1.0.0",
     "sha256": "^0.2.0",
     "simple-google-openid": "^0.2.1"
   }

@@ -3,12 +3,9 @@
 // load the configuration file
 const config = require('./app/config');
 
-// load authentication config
-const passport = require('./app/config/passport');
-
 // initialize and start the express app
 const express = require('./app/core/express');
-express.start(passport);
+express.start();
 const app = express.getApp();
 
 // start the express api
