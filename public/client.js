@@ -80,7 +80,7 @@ window.addEventListener('load', () => {
 })
 
 function signIn() {
-    let fetchURL = 'user/login';
+    let fetchURL = 'api/user/login';
     callServer(fetchURL, 'POST');
 }
 
