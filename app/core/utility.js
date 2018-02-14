@@ -52,13 +52,15 @@ module.exports.findOrCreate = function(profile, callback) {
             throw error;
         } else if (!results[0]) {
             console.log('not found, inserting');
-            mysqlConnection.query('INSERT INTO user SET ?', {
+            let user = {
                 fname: profile.name.givenName,
                 lname: profile.name.familyName,
                 email: profile.emails[0].value,
                 budget: 0
-            })
-            callback(null, false)
+            }
+            mysqlConnection.query('INSERT INTO user SET ?', user)
+            user.id = results.insertId;
+            callback(null, user);
         } else {
             callback(null, results[0]);
         }
