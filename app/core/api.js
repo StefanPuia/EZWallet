@@ -54,19 +54,14 @@ module.exports = function(app) {
 
     app.get('/api/user/', function(req, res) {
         if(req.user) {
-            util.query('SELECT * from user WHERE ?? = ?', ['email', req.user.emails[0].value], function(user) {
-                if (user.length > 0) {
-                    Object.keys(req.query).forEach(function(key) {
-                        if(req.query[key] == 'false') {
-                            delete user[0][key];
-                        }
-                    })
-                    res.status(200).json(user[0]);
+            util.findOrCreate(req.user, function(err,user){
+                if(err){
+                    console.log()
+                    res.sendStatus(500);
+                }else{
+                    res.status(200).json(user);
                 }
-                else {
-                    res.status(200).json({err: 'user not found'});
-                }
-            })
+            });
         }
     })
 
@@ -95,15 +90,15 @@ module.exports = function(app) {
         }
     })
 
-    app.get('/api/transaction/:id', function(res,req){
+    app.get('/api/transaction/:id', function(req,res){
         if(req.user){
             util.query('SELECT amount, category, description, tdate, image FROM transation WHERE ?? = ? AND ?? = ?', ['id', req.perams.id, 'email', req.user.emails[0].value], function(results){
-                res.status(200).send(results[0]);
-            });
+            res.status(200).send(results[0]);
+             });
         }
     })
 
-    app.delete('/api/transation/:id', function(res,req){
+    app.delete('/api/transation/:id', function(req,res){
         if(req.user){
             util.query('DELETE FROM transation WHERE ?? = ? AND ?? = ?', ['id', req.perams.id, 'email', req.user.emails[0].value], function(results){
                 res.sendStatus(204);
@@ -112,8 +107,22 @@ module.exports = function(app) {
     })
 
     app.post('/api/transaction', function(req,res){
-
+        if(req.user){
+            util.findOrCreate(req.user, function(err,user){
+                if(err){
+                    console.log(err);
+                    res.sendStatus(400);
+                }else{
+                    let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
+                    let values = [user.id, req.body.amount, req.body.description, req.body.date, req.body.category, req.body.image]
+                    util.query('INSERT into transation(??) values (?)', columns, valuse, function(req,res){
+                        res.sendStatus(200);
+                    });
+                }
+            });
+        }
     })
+
 
     app.post('/user/login', function(req, res) {
         console.log(req.user);
