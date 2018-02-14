@@ -10,7 +10,7 @@ function $(query) {
 }
 
 function jsonToQueryString(json) {
-    return '?' + 
+    return '?' +
         Object.keys(json).map(function(key) {
             return encodeURIComponent(key) + '=' +
                 encodeURIComponent(json[key]);
@@ -32,7 +32,7 @@ async function signOut() {
     $('#button-signout').style.display = 'none';
 }
 
-async function callServer(fetchURL, method) {
+async function callServer(fetchURL, method, payload) {
     const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
     let el = $('#server-response');
@@ -46,6 +46,11 @@ async function callServer(fetchURL, method) {
         },
     };
 
+    if (payload) {
+        fetchOptions.body = JSON.stringify(payload);
+        console.log( fetchOptions );
+    }
+
     console.log(`${method} ${fetchURL}`);
     const response = await fetch(fetchURL, fetchOptions);
     if (!response.ok) {
@@ -56,11 +61,11 @@ async function callServer(fetchURL, method) {
 
     // handle the response
     let data = await response.text();
-    if(!data) {
-	    data = "success";
-	}
+    if (!data) {
+        data = "success";
+    }
 
-	console.log(data + '\n\n');
+    console.log(data + '\n\n');
     el.textContent = data;
 }
 
@@ -72,50 +77,79 @@ function getQueryString(field, url) {
 };
 
 window.addEventListener('load', () => {
-	if(typeof googleUser == 'undefined') {
-		$('#button-google-signin').style.display = '';
-    	$('#button-signout').style.display = 'none';
-	}
-	$('body').style.display = '';
+    if (typeof googleUser == 'undefined') {
+        $('#button-google-signin').style.display = '';
+        $('#button-signout').style.display = 'none';
+    }
+    $('body').style.display = '';
 })
 
 function signIn() {
     let fetchURL = 'api/user/login';
-    callServer(fetchURL, 'POST');
+    callServer(fetchURL, 'POST', null);
 }
 
 function getDetails() {
-	const apiOptions = {
-    	id: $('#user_id').checked,
-    	fname: $('#user_fname').checked,
-    	lname: $('#user_lname').checked,
-    	email: $('#user_email').checked,
-    	budget: $('#user_budget').checked,
+    const apiOptions = {
+        id: $('#user_id').checked,
+        fname: $('#user_fname').checked,
+        lname: $('#user_lname').checked,
+        email: $('#user_email').checked,
+        budget: $('#user_budget').checked,
 
     }
     let fetchURL = 'api/user/' + $('#userid').value + jsonToQueryString(apiOptions);
-    callServer(fetchURL, 'GET');
+    callServer(fetchURL, 'GET', null);
 }
 
 function getBudget() {
-	let fetchURL = 'api/budget/';
-	callServer(fetchURL, 'GET');
+    let fetchURL = 'api/budget/';
+    callServer(fetchURL, 'GET', null);
 }
 
 function getOwnDetails() {
-	const apiOptions = {
-    	id: $('#user_id').checked,
-    	fname: $('#user_fname').checked,
-    	lname: $('#user_lname').checked,
-    	email: $('#user_email').checked,
-    	budget: $('#user_budget').checked,
+    const apiOptions = {
+        id: $('#user_id').checked,
+        fname: $('#user_fname').checked,
+        lname: $('#user_lname').checked,
+        email: $('#user_email').checked,
+        budget: $('#user_budget').checked,
 
     }
     let fetchURL = 'api/user/' + jsonToQueryString(apiOptions);
-    callServer(fetchURL, 'GET');
+    callServer(fetchURL, 'GET', null);
 }
 
 function setBudget() {
-	let fetchURL = 'api/budget/' + $('#user_input').value;
-	callServer(fetchURL, 'POST');
+    let fetchURL = 'api/budget/';
+    let payload = {
+        budget: $('#user_input').value
+    };
+
+    callServer(fetchURL, 'POST', payload);
+}
+
+function getTransactions() {
+    callServer('api/transaction', 'GET');
+}
+
+function getTransaction() {
+    let fetchURL = 'api/transaction/' + $('#user_input').value;
+    callServer(fetchURL, 'GET', null);
+}
+
+function deleteTransaction() {
+    let fetchURL = 'api/transaction/' + $('#user_input').value;
+    callServer(fetchURL, 'DELETE', null);
+}
+
+function addTransaction() {
+    let fetchURL = 'api/transaction/';
+    let payload = {
+        amount: $('#transaction_val').value,
+        description: $('#transaction_desc').value,
+        tdate: $('#transaction_date').value,
+        category: $('#transaction_cat').value
+    };
+    callServer(fetchURL, 'POST', payload);
 }

@@ -21,8 +21,19 @@
 	<button onclick="getOwnDetails()">get own details</button>
 	<button onclick="getBudget()">get own budget</button>
 	<br><br>
-	<input type="text" id="user_input" placeholder="input"><br>
+	<input type="number" id="user_input" placeholder="input"><br>
 	<button onclick="setBudget()">set own budget</button>
+	<button onclick="getTransactions()">get all transactions</button>
+	<button onclick="getTransaction()">get transaction by id</button>
+	<button onclick="deleteTransaction()">delete transaction by id</button>
+	<br><br>
+	<input type="number" id="transaction_val" placeholder="transaction value"><br>
+	<input type="number" id="transaction_cat" placeholder="transaction category"><br>
+	<input type="text" id="transaction_desc" placeholder="transaction description"><br>
+	<input type="date" id="transaction_date" placeholder="transaction date"><br>
+	<button onclick="addTransaction()">add transaction</button>
+
+	<br><br>
 	<pre id="server-response" style="border: 1px dashed black; min-width: 10em; min-height: 1em; padding: .5em;"></pre>
 	<script src="public/client.js"></script>
 </body>
