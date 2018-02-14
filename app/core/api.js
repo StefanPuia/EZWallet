@@ -86,6 +86,19 @@ module.exports = function(app) {
         }
     })
 
+    app.get('/api/transaction', function(req, res){
+        if(req.user){
+            util.query('SELECT amount, discription, tdate, category, image FROM transaction, user WHERE ?? = ?', ['email', req.user.emails[0].value,],
+            function(results){
+                res.status(200).send(results);
+            });
+        }
+    })
+
+    app.post('/api/transaction', function(req,res){
+
+    })
+
     app.post('/user/login', function(req, res) {
         console.log(req.user);
         if(req.user.id) {
@@ -103,7 +116,7 @@ module.exports = function(app) {
                     }
                 }
             })
-        }  
+        }
         else {
             res.sendStatus(403);
         }
