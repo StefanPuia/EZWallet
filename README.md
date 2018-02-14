@@ -2,7 +2,7 @@
 
 Install
 -------
-1. Download Node.js 
+1. Download Node.js
 https://nodejs.org/en/
 
 2. Download Git
@@ -23,7 +23,7 @@ Testing
 -------
 To run the server:
 ```bash
-npm server
+npm start
 ```
 
 To stop the server (Ctrl+C or Command+C):
