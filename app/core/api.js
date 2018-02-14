@@ -88,9 +88,25 @@ module.exports = function(app) {
 
     app.get('/api/transaction', function(req, res){
         if(req.user){
-            util.query('SELECT amount, discription, tdate, category, image FROM transaction, user WHERE ?? = ?', ['email', req.user.emails[0].value,],
+            util.query('SELECT amount, discription, tdate, category, image FROM transaction, user WHERE ?? = ?', ['email', req.user.emails[0].value],
             function(results){
                 res.status(200).send(results);
+            });
+        }
+    })
+
+    app.get('/api/transaction/:id', function(res,req){
+        if(req.user){
+            util.query('SELECT amount, category, description, tdate, image FROM transation WHERE ?? = ? AND ?? = ?', ['id', req.perams.id, 'email', req.user.emails[0].value], function(results){
+                res.status(200).send(results[0]);
+            });
+        }
+    })
+
+    app.delete('/api/transation/:id', function(res,req){
+        if(req.user){
+            util.query('DELETE FROM transation WHERE ?? = ? AND ?? = ?', ['id', req.perams.id, 'email', req.user.emails[0].value] function(results){
+                res.sendStatus(204);
             });
         }
     })
