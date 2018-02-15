@@ -46,12 +46,15 @@ async function callServer(fetchURL, method, payload) {
         },
     };
 
+    console.log(`${method} ${fetchURL}`);
+
     if (payload) {
-        fetchOptions.body = JSON.stringify(payload);
-        console.log( fetchOptions );
+        let data = JSON.stringify(payload);
+        fetchOptions.body = data;
+        fetchOptions.headers['Content-Type'] = 'application/json';
+        fetchOptions.headers['Accept'] = 'application/json';
     }
 
-    console.log(`${method} ${fetchURL}`);
     const response = await fetch(fetchURL, fetchOptions);
     if (!response.ok) {
         // handle the error
@@ -62,11 +65,17 @@ async function callServer(fetchURL, method, payload) {
     // handle the response
     let data = await response.text();
     if (!data) {
-        data = "success";
+        data = JSON.stringify({err: "error on fetch"});
     }
 
-    console.log(data + '\n\n');
-    el.textContent = data;
+    try {
+        data = JSON.parse(data);
+    } catch(err) {
+        data = {response: data};
+    }
+
+    el.textContent = JSON.stringify(data, null, 4);
+    console.log(JSON.stringify(data) + '\n\n');
 }
 
 function getQueryString(field, url) {

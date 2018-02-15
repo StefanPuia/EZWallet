@@ -70,9 +70,7 @@ module.exports = function(app) {
                 if (user.length > 0) {
                     res.status(200).json(user[0]);
                 } else {
-                    res.status(404).json({
-                        err: 'user not found'
-                    });
+                    res.sendStatus(404);
                 }
             })
         }
@@ -105,7 +103,12 @@ module.exports = function(app) {
     app.get('/api/budget', function(req, res) {
         if (req.user) {
             util.query('SELECT ?? from ?? where ??=?', ['budget', 'user', 'email', req.user.emails[0].value], function(results) {
-                res.status(200).send("" + results[0].budget);
+                if(results.length > 0) {
+                    res.status(200).send("" + results[0].budget);
+                }
+                else {
+                    res.sendStatus(404);
+                }
             });
         }
     })
@@ -116,10 +119,9 @@ module.exports = function(app) {
      */
     app.post('/api/budget', function(req, res) {
         if (req.user) {
-            res.send(req.body);
-            // util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['user', 'budget', req.body.budget, 'email', req.user.emails[0].value], function(results) {
-            //     res.status(200).send(results[0]);
-            // });
+            util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['user', 'budget', req.body.budget, 'email', req.user.emails[0].value], function(results) {
+                res.sendStatus(202);
+            });
         }
     })
 
@@ -130,10 +132,20 @@ module.exports = function(app) {
     app.get('/api/transaction', function(req, res) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
-                let columns = ['amount', 'description', 'tdate', 'category', 'image'];
-                util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'transaction', 'user', user.id] ,function(results) {
-                    res.status(200).send(results);
-                });
+                if(user) {
+                    let columns = ['id', 'amount', 'description', 'tdate', 'category', 'image'];
+                    util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'transaction', 'user', user.id] ,function(results) {
+                        if(results.length > 0) {
+                            res.status(200).send(results);
+                        }
+                        else {
+                            res.sendStatus(404);
+                        }
+                    });
+                }
+                else {
+                    res.sendStatus(401);
+                }
             })   
         }
     })
@@ -145,11 +157,16 @@ module.exports = function(app) {
     app.post('/api/transaction', function(req, res) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
-                let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
-                let values = [user.id, req.body.amount, req.body.description, req.body.date, req.body.category, req.body.image]
-                util.query('INSERT into transaction(??) values (?)', [columns, values], function(req, res) {
-                    res.sendStatus(200);
-                });
+                if(user) {
+                    let columns = ['id', 'user', 'amount', 'description', 'tdate', 'category', 'image']
+                    let values = [user.id, req.body.amount, req.body.description, req.body.tdate, req.body.category, req.body.image]
+                    util.query('INSERT into transaction(??) values (?)', [columns, values], function(results) {
+                        res.sendStatus(201);
+                    });
+                }
+                else {
+                    res.sendStatus(401);
+                }
             });
         }
     })
@@ -162,10 +179,20 @@ module.exports = function(app) {
     app.get('/api/transaction/:id', function(req, res) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
-                let columns = ['amount', 'category', 'description', 'tdate', 'image']
-                util.query('SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?', [columns, 'transation', 'id', req.perams.id, 'user', user.id], function(results) {
-                    res.status(200).send(results[0]);
-                });
+                if(user) {
+                    let columns = ['id', 'amount', 'category', 'description', 'tdate', 'image']
+                    util.query('SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?', [columns, 'transaction', 'id', req.params.id, 'user', user.id], function(results) {
+                        if(results.length > 0) {
+                            res.status(200).send(results[0]);
+                        }
+                        else {
+                            res.sendStatus(404);
+                        }
+                    });
+                }
+                else {
+                    res.sendStatus(401);
+                }
             })
         }
     })
@@ -175,12 +202,22 @@ module.exports = function(app) {
      * @param {Int} id  transaction id
      * delete the transaction with the specified id
      */
-    app.delete('/api/transation/:id', function(req, res) {
+    app.delete('/api/transaction/:id', function(req, res) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
-                util.query('DELETE FROM ?? WHERE ?? = ? AND ?? = ?', ['transaction', 'id', req.perams.id, 'user', user.id], function(results) {
-                    res.sendStatus(204);
-                });
+                if(user) {
+                    util.query('DELETE FROM ?? WHERE ?? = ? AND ?? = ?', ['transaction', 'id', req.params.id, 'user', user.id], function(results) {
+                        if(results.affectedRows > 0) {
+                            res.status(200).send('Deleted');
+                        }
+                        else {
+                            res.sendStatus(404);
+                        }
+                    });
+                }
+                else {
+                    res.sendStatus(401);
+                }
             })
         }
     })
