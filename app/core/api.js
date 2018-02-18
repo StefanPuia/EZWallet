@@ -146,7 +146,7 @@ module.exports = function(app) {
                 else {
                     res.sendStatus(401);
                 }
-            })   
+            })
         }
     })
 
@@ -158,7 +158,7 @@ module.exports = function(app) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
                 if(user) {
-                    let columns = ['id', 'user', 'amount', 'description', 'tdate', 'category', 'image']
+                    let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
                     let values = [user.id, req.body.amount, req.body.description, req.body.tdate, req.body.category, req.body.image]
                     util.query('INSERT into transaction(??) values (?)', [columns, values], function(results) {
                         res.sendStatus(201);
