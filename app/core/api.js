@@ -137,30 +137,25 @@ module.exports = function(app) {
             util.getUserId(req.user, function(err, user) {
                 if(user) {
                     let columns = ['id', 'amount', 'description', 'tdate', 'category', 'image'];
+                    let sql;
+                    let inserts;
+                    //adds date filter if perameters are present
                     if(req.query.month == undefined || req.query.year == undefined){
-                        util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'transaction', 'user', user.id] ,function(results) {
-                            if(results.length > 0) {
-                                res.status(200).send(results);
-                            }
-                            else {
-                                res.sendStatus(404);
-                            }
-                        });
+                        sql = 'SELECT ?? FROM ?? WHERE ?? = ?';
+                        inserts = [columns, 'transaction', 'user', user.id];
                     }else{
-                        let sql = 'SELECT ?? FROM ?? WHERE ?? = ? AND MONTH(tdate) = ? AND YEAR(tdate) = ?'
-                        util.query(sql, [columns, 'transaction', 'user', user.id, req.query.month, req.query.year] ,function(results) {
-                            if(results.length > 0) {
-                                res.status(200).send(results);
-                            }
-                            else {
-                                res.sendStatus(404);
-                            }
-                        });
+                        sql = 'SELECT ?? FROM ?? WHERE ?? = ? AND MONTH(tdate) = ? AND YEAR(tdate) = ?';
+                        inserts = [columns, 'transaction', 'user', user.id, req.query.month, req.query.year];
                     }
 
-
-                }
-                else {
+                    util.query(sql, inserts, function(results) {
+                        if(results.length > 0) {
+                            res.status(200).send(results);
+                        }else{
+                            res.sendStatus(404);
+                        }
+                    });
+                }else{
                     res.sendStatus(401);
                 }
             })
