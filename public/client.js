@@ -151,6 +151,10 @@ function deleteTransaction() {
     let fetchURL = 'api/transaction/' + $('#user_input').value;
     callServer(fetchURL, 'DELETE', null);
 }
+function getTransByDate(){
+    url = 'api/transaction?month=' + $('#transaction_month').value + '&year='+  $('#transaction_year').value;
+    callServer(url, 'GET');
+}
 
 function addTransaction() {
     let fetchURL = 'api/transaction/';

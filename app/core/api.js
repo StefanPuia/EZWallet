@@ -128,20 +128,37 @@ module.exports = function(app) {
     /**
      * GET /api/transaction
      * get all user transactions
+     * if month and year query is provided, records within that date will be provided
+     * @param {Int} month  transaction Month
+     * @param {Int} year  transaction Year
      */
     app.get('/api/transaction', function(req, res) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
                 if(user) {
                     let columns = ['id', 'amount', 'description', 'tdate', 'category', 'image'];
-                    util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'transaction', 'user', user.id] ,function(results) {
-                        if(results.length > 0) {
-                            res.status(200).send(results);
-                        }
-                        else {
-                            res.sendStatus(404);
-                        }
-                    });
+                    if(req.query.month == undefined || req.query.year == undefined){
+                        util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'transaction', 'user', user.id] ,function(results) {
+                            if(results.length > 0) {
+                                res.status(200).send(results);
+                            }
+                            else {
+                                res.sendStatus(404);
+                            }
+                        });
+                    }else{
+                        let sql = 'SELECT ?? FROM ?? WHERE ?? = ? AND MONTH(tdate) = ? AND YEAR(tdate) = ?'
+                        util.query(sql, [columns, 'transaction', 'user', user.id, req.query.month, req.query.year] ,function(results) {
+                            if(results.length > 0) {
+                                res.status(200).send(results);
+                            }
+                            else {
+                                res.sendStatus(404);
+                            }
+                        });
+                    }
+
+
                 }
                 else {
                     res.sendStatus(401);
