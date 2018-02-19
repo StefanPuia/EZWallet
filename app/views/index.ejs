@@ -1,0 +1,42 @@
+<!doctype html>
+<head>
+	<title>EZWallet</title>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<meta name="google-signin-client_id" content="16592814341-srr33lj6et1lj5ls0dj4v73q495khfko.apps.googleusercontent.com">
+</head>
+<body style="display:none">
+	<h1>EZWallet<span id="greeting"></span></h1>
+
+	<p><div id="button-google-signin" class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+	<a id="button-signout" href="#" onclick="signOut();">Sign out</a></p>
+
+	<p>Below is the response from the server API: </p>
+	<label><input type="checkbox" id="user_id">ID</label><br>
+	<label><input type="checkbox" id="user_lname">lName</label><br>
+	<label><input type="checkbox" checked id="user_fname">fName</label><br>
+	<label><input type="checkbox" checked id="user_email">email</label><br>
+	<label><input type="checkbox" id="user_budget">budget</label><br>
+	<input type="number" id="userid" value="1" placeholder="user id"><br>
+	<button onclick="getDetails()">get user details by id</button>
+	<button onclick="getOwnDetails()">get own details</button>
+	<button onclick="getBudget()">get own budget</button>
+	<br><br>
+	<input type="number" id="user_input" placeholder="input"><br>
+	<button onclick="setBudget()">set own budget</button>
+	<button onclick="getTransactions()">get all transactions</button>
+	<button onclick="getTransaction()">get transaction by id</button>
+	<button onclick="deleteTransaction()">delete transaction by id</button>
+	<br><br>
+	<input type="number" id="transaction_val" placeholder="transaction value"><br>
+	<input type="number" id="transaction_cat" placeholder="transaction category"><br>
+	<input type="text" id="transaction_desc" placeholder="transaction description"><br>
+	<input type="date" id="transaction_date" placeholder="transaction date"><br>
+	<button onclick="addTransaction()">add transaction</button>
+	<br/>
+	<input type="number" id="transaction_month" placeholder="transactions month"><br>
+	<input type="number" id="transaction_year" placeholder="transactions year"><br>
+	<button onclick="getTransByDate()">get transactions in month</button>
+	<br><br>
+	<pre id="server-response" style="border: 1px dashed black; min-width: 10em; min-height: 1em; padding: .5em;"></pre>
+	<script src="public/client.js"></script>
+</body>

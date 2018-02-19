@@ -4,8 +4,8 @@
   "description": "weekly budget tracking app",
   "main": "app/core/server.js",
   "scripts": {
-    "test": "node app/core/server.js",
-    "server": "node app/core/server.js"
+    "test": "node index",
+    "start": "node index"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,8 @@
     "body-parser": "^1.18.2",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "sha256": "^0.2.0",
+    "simple-google-openid": "^0.2.1"
   }
 }
