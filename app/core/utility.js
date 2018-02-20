@@ -6,7 +6,6 @@ const config = require('./../config');
 // load installed modules
 const sha256 = require('sha256');
 const mysql = require('mysql');
-const Joi = require('joi');
 
 /**
  * handle the sql server disconnect and reconnect if required
@@ -93,36 +92,4 @@ module.exports.getUserId = function(profile, callback) {
             }
         }
     )
-}
-
-//Validation Schemas
-const postTransSchema = Joi.object().keys({
-    amount: Joi.number().min(0).precision(2).required(),
-    description: Joi.string().max(100).optional(),
-    tdate: Joi.date().iso().max('now').required(),
-    category: Joi.number().integer().min(0).required(),
-    image: Joi.string().optional()
-});
-
-const postBudgetSchema = Joi.object().keys({
-    budget: Joi.number().min(0).precision(2).required()
-})
-
-//Validation Functions
-module.exports.validateTrans = function(req) {
-    const result = Joi.validate(req.body,postTransSchema);
-    return result;
-}
-
-module.exports.validateBudget = function(req){
-    const result = Joi.validate(req.body,postBudgetSchema);
-    return result;
-}
-
-module.exports.resultValid = function(result){
-    if(result.error === null){
-        return true;
-    }else{
-        return false;
-    }
 }
