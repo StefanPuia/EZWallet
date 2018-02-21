@@ -100,8 +100,8 @@ module.exports = function(app) {
      * GET /api/budget
      * get the user budget
      */
-    app.get('/api/budget', function(req, res)
-        if (req.user) {
+    app.get('/api/budget', function(req, res){
+        if(req.user) {
             let id;
             util.getUserId(req.user, function(err,user){
                 id = user.id;
@@ -122,7 +122,7 @@ module.exports = function(app) {
      * update the user's budget with the provided value in the body
      */
     app.post('/api/budget', function(req, res) {
-        if (req.user) {
+        if(req.user) {
             let valiResult = util.validateBudget(req);
             //runs sql query if request has valid body values
             if(util.resultValid(valiResult)){
