@@ -100,9 +100,13 @@ module.exports = function(app) {
      * GET /api/budget
      * get the user budget
      */
-    app.get('/api/budget', function(req, res) {
+    app.get('/api/budget', function(req, res)
         if (req.user) {
-            util.query('SELECT ?? from ?? where ??=?', ['budget', 'user', 'email', req.user.emails[0].value], function(results) {
+            let id;
+            util.getUserId(req.user, function(err,user){
+                id = user.id;
+            });
+            util.query('SELECT ?? from ?? where ??=?', ['amount', 'balance', 'user', id], function(results) {
                 if(results.length > 0) {
                     res.status(200).send("" + results[0].budget);
                 }
@@ -122,7 +126,10 @@ module.exports = function(app) {
             let valiResult = util.validateBudget(req);
             //runs sql query if request has valid body values
             if(util.resultValid(valiResult)){
-                util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['user', 'budget', req.body.budget, 'email', req.user.emails[0].value], function(results) {
+                util.getUserId(req.user, function(err,user){
+                    id = user.id;
+                });
+                util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['amount', 'balance', req.body.budget, 'user', id], function(results) {
                     res.sendStatus(202);
                 });
             }else{
