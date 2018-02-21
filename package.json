@@ -21,6 +21,7 @@
     "body-parser": "^1.18.2",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
+    "joi": "^13.1.2",
     "mysql": "^2.15.0",
     "sha256": "^0.2.0",
     "simple-google-openid": "^0.2.1"
