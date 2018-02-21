@@ -18,7 +18,7 @@ create table category (
 create table transaction (
   id int primary key auto_increment,
   user int not null,
-  amount decimal not null,
+  amount float not null,
   description varchar(100),
   tdate date not null,
   category int not null,
@@ -31,6 +31,6 @@ create table balance (
     id int primary key auto_increment,
     user int not null,
     bdate date not null,
-    budget decimal not null,
+    budget float not null,
     foreign key(user) references user(id)
 );
