@@ -46,3 +46,57 @@ app.get('/login', function(req, res) {
     res.status(200).render('login')
 })
 
+/**
+ * GET /dashboard
+ * serve the dashboard page
+ */
+app.get('/dashboard', function(req, res) {
+    res.status(200).render('dashboard')
+})
+
+/**
+ * GET /records
+ * serve the records page
+ */
+app.get('/records', function(req, res) {
+    res.status(200).render('records')
+})
+
+/**
+ * GET /settings
+ * serve the settings page
+ */
+app.get('/settings', function(req, res) {
+    res.status(200).render('settings')
+})
+
+/**
+ * GET /add
+ * serve the add page
+ */
+app.get('/add', function(req, res) {
+    res.status(200).render('add')
+})
+
+/**
+ * GET /details
+ * serve the details page
+ */
+app.get('/details', function(req, res) {
+    res.status(200).render('details')
+})
+
+/**
+ * GET /edit
+ * serve the edit page
+ */
+app.get('/edit', function(req, res) {
+    res.status(200).render('edit')
+})
+
+app.get('/test', function(req, res) {
+	res.status(200).render('test/test');
+})
+app.get('/template', function(req, res) {
+	res.status(200).render('test/template');
+})

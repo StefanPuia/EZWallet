@@ -100,9 +100,13 @@ module.exports = function(app) {
      * GET /api/budget
      * get the user budget
      */
-    app.get('/api/budget', function(req, res) {
-        if (req.user) {
-            util.query('SELECT ?? from ?? where ??=?', ['budget', 'user', 'email', req.user.emails[0].value], function(results) {
+    app.get('/api/budget', function(req, res){
+        if(req.user) {
+            let id;
+            util.getUserId(req.user, function(err,user){
+                id = user.id;
+            });
+            util.query('SELECT ?? from ?? where ??=?', ['amount', 'balance', 'user', id], function(results) {
                 if(results.length > 0) {
                     res.status(200).send("" + results[0].budget);
                 }
@@ -118,10 +122,20 @@ module.exports = function(app) {
      * update the user's budget with the provided value in the body
      */
     app.post('/api/budget', function(req, res) {
-        if (req.user) {
-            util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['user', 'budget', req.body.budget, 'email', req.user.emails[0].value], function(results) {
-                res.sendStatus(202);
-            });
+        if(req.user) {
+            let valiResult = util.validateBudget(req);
+            //runs sql query if request has valid body values
+            if(util.resultValid(valiResult)){
+                util.getUserId(req.user, function(err,user){
+                    id = user.id;
+                });
+                util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['amount', 'balance', req.body.budget, 'user', id], function(results) {
+                    res.sendStatus(202);
+                });
+            }else{
+                //returns input errors as res
+                res.send(valiResult.error.message).status(400);
+            }
         }
     })
 
@@ -169,14 +183,20 @@ module.exports = function(app) {
     app.post('/api/transaction', function(req, res) {
         if (req.user) {
             util.getUserId(req.user, function(err, user) {
-                if(user) {
-                    let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
-                    let values = [user.id, req.body.amount, req.body.description, req.body.tdate, req.body.category, req.body.image]
-                    util.query('INSERT into transaction(??) values (?)', [columns, values], function(results) {
-                        res.sendStatus(201);
-                    });
-                }
-                else {
+                if(user){
+                    let valiResult = util.validateTrans(req);
+                    //runs sql query if request has valid body values
+                    if(util.resultValid(valiResult)){
+                        let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
+                        let values = [user.id, req.body.amount, req.body.description, req.body.tdate, req.body.category, req.body.image]
+                        util.query('INSERT into transaction(??) values (?)', [columns, values], function(results) {
+                            res.sendStatus(201);
+                        });
+                    }else{
+                        //returns input errors as res
+                        res.send(valiResult.error.message).status(400);
+                    }
+                }else{
                     res.sendStatus(401);
                 }
             });
