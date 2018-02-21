@@ -31,6 +31,6 @@ create table balance (
     id int primary key auto_increment,
     user int not null,
     bdate date not null,
-    amount decimal not null,
+    budget decimal not null,
     foreign key(user) references user(id)
 );
