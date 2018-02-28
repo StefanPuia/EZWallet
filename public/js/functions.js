@@ -11,6 +11,10 @@ function getQueryString(field, url) {
     return string ? string[1] : null;
 };
 
+function $(query) {
+    return document.querySelector(query);
+}
+
 /**
  * transform a json object into a query string
  * @param {Object} json the json object
@@ -112,7 +116,7 @@ function getDetails(apiOptions = {}, callback) {
 /**
  * get the user's budget
  */
-function getBudget() {
+function getBudget(callback) {
     callServer('api/budget/', function(data) {
         callback(data);
     });
@@ -121,7 +125,7 @@ function getBudget() {
 /**
  * set the user's budget
  * @param {Float} budget budget to be set
- * @param {Function} callback 
+ * @param {Function} callback
  */
 function setBudget(budget, callback) {
     let payload = {
@@ -170,7 +174,7 @@ function deleteTransaction(id, callback) {
  */
 function getTransactions(params, callback) {
     let fetchURL = 'api/transaction' + jsonToQueryString(params);
-    callServer(function(data) {
+    callServer(fetchURL,function(data) {
         callback(data);
     });
 }
