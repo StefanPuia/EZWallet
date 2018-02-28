@@ -66,7 +66,7 @@ module.exports = function(app) {
                     columns.push(key);
                 }
             })
-            util.query('SELECT ?? from ?? WHERE ?? = ?', [columns, 'user', 'id', req.params.id], function(user) {
+            util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'user', 'id', req.params.id], function(user) {
                 if (user.length > 0) {
                     res.status(200).json(user[0]);
                 } else {
@@ -106,7 +106,7 @@ module.exports = function(app) {
             util.getUserId(req.user, function(err,user){
                 id = user.id;
             });
-            util.query('SELECT ?? from ?? where ??=?', ['amount', 'balance', 'user', id], function(results) {
+            util.query('SELECT ?? from ?? where ?? = ?', ['budget', 'budget', 'user', id], function(results) {
                 if(results.length > 0) {
                     res.status(200).send("" + results[0].budget);
                 }
@@ -129,7 +129,7 @@ module.exports = function(app) {
                 util.getUserId(req.user, function(err,user){
                     id = user.id;
                 });
-                util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['amount', 'balance', req.body.budget, 'user', id], function(results) {
+                util.query('UPDATE ?? SET ?? = ? WHERE ?? = ?', ['budget', 'budget', req.body.budget, 'user', id], function(results) {
                     res.sendStatus(202);
                 });
             }else{
