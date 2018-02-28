@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<%- include("partials/head") %>
+	<body>
+		<%- include("partials/header") %>
+		
+		<main>
+			<div class="container center">
+				<h3>Dashboard</h3>
+				<div class="row">
+					<div class="col s12">
+						<h5>Balance</h5>
+						<span class="green-text text-accent-3">
+							<h4 id="current-balance">£ 130.85</h4>
+						</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col l6 s12">
+						<h5>Records</h5>
+						<ul class="collection left-align black-text">
+							<li class="collection-item avatar">
+								<a href="" class="black-text">
+									<i class="material-icons circle red lighten-1">restaurant</i>
+									<b class="title">Food&Drinks</b>
+									<p>Saintsbury's<br>
+									<small>02 Feb 2016</small>
+									</p>
+									<span class="secondary-content red-text text-accent-3">-£18.23</span>
+								</a>
+							</li>
+							<li class="collection-item avatar">
+								<a href="" class="black-text">
+									<i class="material-icons circle gray lighten-1">directions_bus</i>
+									<b class="title">Transportation</b>
+									<p>Firstbus<br>
+									<small>02 Feb 2016</small>
+									</p>
+									<span class="secondary-content red-text text-accent-3">-£5.50</span>
+								</a>
+							</li>
+							<li class="collection-item">
+								<a href="" class="black-text">
+									Show More...
+									<span class="secondary-content">
+										<i class="material-icons">send</i>
+									</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col l6 s12">
+						<h5>Expenses Structure</h5>
+						<div id="expenses-chart">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</body>
+</html>
