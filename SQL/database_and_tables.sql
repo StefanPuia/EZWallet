@@ -29,7 +29,7 @@ create table transaction (
 
 create table budget (
     id int primary key auto_increment,
-    user int not null,
+    user foreign key,
     bdate date not null,
     budget float not null,
     foreign key(user) references user(id)
