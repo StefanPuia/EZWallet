@@ -5,7 +5,7 @@ insert into user(fname, lname, email, token)
   values ('John', 'Smith', 'johnsmith@mail.com', '654321');
 
 insert into budget(user, bdate, budget) 
-  values (1, '2018/01/01', 60)
+  values (1, '2018/01/01', 60);
 
 insert into category(cname) 
   values ('groceries');
