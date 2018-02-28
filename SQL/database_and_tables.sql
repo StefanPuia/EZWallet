@@ -27,7 +27,7 @@ create table transaction (
   foreign key(user) references user(id)
 );
 
-create table balance (
+create table budget (
     id int primary key auto_increment,
     user int not null,
     bdate date not null,
