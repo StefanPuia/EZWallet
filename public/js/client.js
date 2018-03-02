@@ -6,5 +6,9 @@ function onSignIn(googleUser) {
     const profile = googleUser.getBasicProfile();
 
     signIn();
-	fillDash();
+	fillPage();
+}
+
+function fillPage(){
+	calcBudget();
 }

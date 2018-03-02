@@ -1,5 +1,5 @@
 'use strict';
-function fillDash(month, year){
+function calcBudget(month, year){
     let date = {
         'month': month,
         'year': year
