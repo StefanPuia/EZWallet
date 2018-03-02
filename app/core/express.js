@@ -35,7 +35,7 @@ app.use('/', (req, res, next) => {
  * serve landing page
  */
 app.get('/', function(req, res) {
-    res.status(200).render('index');
+    res.status(200).render('dashboard');
 });
 
 /**
@@ -44,14 +44,6 @@ app.get('/', function(req, res) {
  */
 app.get('/login', function(req, res) {
     res.status(200).render('login')
-})
-
-/**
- * GET /dashboard
- * serve the dashboard page
- */
-app.get('/dashboard', function(req, res) {
-    res.status(200).render('dashboard')
 })
 
 /**
@@ -71,19 +63,11 @@ app.get('/settings', function(req, res) {
 })
 
 /**
- * GET /add
- * serve the add page
+ * GET /search
+ * serve the search page
  */
-app.get('/add', function(req, res) {
-    res.status(200).render('add')
-})
-
-/**
- * GET /details
- * serve the details page
- */
-app.get('/details', function(req, res) {
-    res.status(200).render('details')
+app.get('/search', function(req, res) {
+    res.status(200).render('search')
 })
 
 /**
@@ -92,11 +76,4 @@ app.get('/details', function(req, res) {
  */
 app.get('/edit', function(req, res) {
     res.status(200).render('edit')
-})
-
-app.get('/test', function(req, res) {
-	res.status(200).render('test/test');
-})
-app.get('/template', function(req, res) {
-	res.status(200).render('test/template');
 })
