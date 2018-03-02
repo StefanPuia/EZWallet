@@ -1,14 +1,12 @@
-window.onload = function() {
+window.addEventListener('load', async function() {
+    $(".button-collapse").sideNav();
 
+	$('#nav-log').on('click', signOut);
+	$('#nav-log-mobile').on('click', signOut);
 
-}
-function onSignIn(googleUser) {
-    const profile = googleUser.getBasicProfile();
+    if (location.pathname != "/login" && await !gapi.auth2.getAuthInstance().isSignedIn.get()) {
+        signOut();
+    }
 
-    signIn();
-	fillPage();
-}
-
-function fillPage(){
-	calcBudget();
-}
+    calcBudget();
+})
