@@ -30,7 +30,7 @@ function jsonToQueryString(json) {
  * @param {Function} callback
  * @param {Object} options fetch options object
  */
-async function callServer(fetchURL, callback, options) {
+async function callServer(fetchURL, options, callback) {
     options = (typeof options === 'undefined') ? {} : options;
     callback = (typeof callback === 'undefined') ? () => {} : callback;
 
@@ -84,10 +84,13 @@ async function callServer(fetchURL, callback, options) {
  * sign the user in
  */
 function signIn() {
-    callServer('api/user/login', function(data) {
+    $('#nav-log').text("Log Out");
+    $('#nav-log-mobile').text("Log Out");
+    $('.hide-on-signout').each(function(key, el) {
+        el.style.display = 'block';
+    })
+    callServer('api/user', {}, function(data) {
         console.log(data);
-    }, {
-        method: 'POST'
     });
 }
 
@@ -95,7 +98,17 @@ function signIn() {
  * sign the user out
  */
 async function signOut() {
-    await gapi.auth2.getAuthInstance().signOut();
+    if (await gapi.auth2.getAuthInstance().isSignedIn.get()) {
+        await gapi.auth2.getAuthInstance().signOut();
+    }
+    window.location = "/login";
+}
+
+/**
+ * redirects the user when the login at /login succeeds
+ */
+function mainSignIn() {
+    window.location = "/dashboard";
 }
 
 /**
@@ -104,7 +117,7 @@ async function signOut() {
  */
 function getDetails(apiOptions = {}, callback) {
     let fetchURL = 'api/user/' + jsonToQueryString(apiOptions);
-    callServer(fetchURL, function(data) {
+    callServer(fetchURL, {}, function(data) {
         callback(data);
     });
 }
@@ -112,8 +125,8 @@ function getDetails(apiOptions = {}, callback) {
 /**
  * get the user's budget
  */
-function getBudget() {
-    callServer('api/budget/', function(data) {
+function getBudget(callback) {
+    callServer('api/budget/', {}, function(data) {
         callback(data);
     });
 }
@@ -121,18 +134,18 @@ function getBudget() {
 /**
  * set the user's budget
  * @param {Float} budget budget to be set
- * @param {Function} callback 
+ * @param {Function} callback
  */
 function setBudget(budget, callback) {
     let payload = {
         budget: budget
     };
 
-    callServer('api/budget/', function(data) {
-        callback(data);
-    }, {
+    callServer('api/budget/', {
         method: 'post',
         body: JSON.stringify(payload)
+    }, function(data) {
+        callback(data);
     });
 }
 
@@ -141,11 +154,11 @@ function setBudget(budget, callback) {
  * @param {Object} payload transaction data
  */
 function addTransaction(payload) {
-    callServer('api/transaction/', function(data) {
-        callback(data);
-    }, {
+    callServer('api/transaction/', {
         method: 'post',
         body: JSON.stringify(payload)
+    }, function(data) {
+        callback(data);
     });
 }
 
@@ -156,10 +169,10 @@ function addTransaction(payload) {
  */
 function deleteTransaction(id, callback) {
     let fetchURL = 'api/transaction/' + id;
-    callServer(fetchURL, function(data) {
-        callback(data);
-    }, {
+    callServer(fetchURL, {
         method: 'delete'
+    }, function(data) {
+        callback(data);
     });
 }
 
@@ -170,7 +183,7 @@ function deleteTransaction(id, callback) {
  */
 function getTransactions(params, callback) {
     let fetchURL = 'api/transaction' + jsonToQueryString(params);
-    callServer(function(data) {
+    callServer(fetchURL, {}, function(data) {
         callback(data);
     });
 }
@@ -182,7 +195,30 @@ function getTransactions(params, callback) {
  */
 function getTransaction(id, callback) {
     let fetchURL = 'api/transaction/' + id;
-    callServer(fetchURL, function(data) {
+    callServer(fetchURL, {}, function(data) {
         callback(data);
+    });
+}
+
+function calcBudget(month, year){
+    let date = {
+        'month': month,
+        'year': year
+    };
+    if (!month || !year) {
+        let d = new Date();
+        date.month = d.getMonth() + 1;
+        date.year = d.getFullYear();
+    }
+
+    getTransactions(date, function(transactions) {
+        let moneySpent = 0;
+        for (let i in transactions) {
+            moneySpent += transactions[i].amount;
+            console.log(transactions[i]);
+        }
+        getBudget(function(budget) {
+            $('#current-balance').text("£" + (budget - moneySpent));
+        });
     });
 }

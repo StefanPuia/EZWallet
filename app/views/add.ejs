@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+ <html>
+      <%- include("partial/head") %>
+      <body>
+            <%- include("partial/header") %>
+
+            <main>
+              <div class="container center-align">
+                <h3>Add record</h3>
+                <div class="row">
+                    <div class="col s12">
+                      <div class="input-field col s3">
+                        <input type="text" class="datepicker">
+                        <label for="textarea1">Date begin</label>
+                      </div>
+                      <div class="input-field col s3">
+                        <input type="text" class="datepicker">
+                        <label for="textarea1">Date end</label>
+                      </div>
+                      <div class="input-field col s3">
+                        <input id="price_begin" type="text" class="validate" >
+                        <label for="price_begin">Price begin</label>
+                      </div>
+                      <div class="input-field col s3">
+                        <input id="price_end" type="text" class="validate" >
+                        <label for="price_end">Price end</label>
+                      </div>
+                      <div class="input-field col s6 ">
+                        <select class="icons">
+                          <option value="" data-icon="images/food.jpg" class="left circle"disabled selected>Food&Drinks</option>
+                          <option value="" data-icon="images/clothing.jpg" class="left circle">Clothing</option>
+                          <option value="" data-icon="images/transportation.jpg" class="left circle">Transportation</option>
+                          <option value="" data-icon="images/entertainment.jpg" class="left circle">Entertainment</option>
+                          <option value="" data-icon="images/food.jpg" class="left circle">Groceries</option>
+                          <option value="" data-icon="images/household.jpg" class="left circle">Household Items</option>
+                          <option value="" data-icon="images/communication.jpg" class="left circle">Communication</option>
+                          <option value="" data-icon="images/leisure.jpg" class="left circle">Leisure</option>
+                          <option value="" data-icon="images/rent.jpg" class="left circle">Rent</option>
+                        </select>
+                        <label>Category</label>
+                    </div>
+                    <div class="input-field col s6 ">
+                      <select class="icons">
+                        <option value="" data-icon="images/food.jpg" class="left circle"disabled selected>ChangshaRoad</option>
+                        <option value="" data-icon="images/clothing.jpg" class="left circle">Wuyi Square</option>
+                        <option value="" data-icon="images/transportation.jpg" class="left circle">YueLu Mountain</option>
+                        <option value="" data-icon="images/entertainment.jpg" class="left circle">Tiedao Campus</option>
+                        <option value="" data-icon="images/food.jpg" class="left circle">A</option>
+                        <option value="" data-icon="images/household.jpg" class="left circle">B</option>
+                        <option value="" data-icon="images/communication.jpg" class="left circle">C</option>
+                        <option value="" data-icon="images/leisure.jpg" class="left circle">L</option>
+                        <option value="" data-icon="images/rent.jpg" class="left circle">R</option>
+                      </select>
+                      <label>Location</label>
+                    </div>
+                  </div>
+                </form>
+                <form class="col s12">
+                  <a class="btn btn-floating pulse"  href="search.html"><i class="material-icons">search</i></a>
+                  <a class="btn btn-floating pulse" href="addrecord.html"><i class="material-icons">add</i></a>
+                  <a class="btn btn-floating  pulse"><i class="material-icons">delete</i></a>
+
+                  <div class="row">
+                    <div class="col s12 center-align ">
+                      <div class="card-panel">
+                        <!-- 下面的表是根据用户名或id查询得到的所有类型的交易的金额 -->
+                        <ul class="collection collapsible popout" data-collapsible="accordion">
+                          <li class="collection-item avatar">
+                            <div class="collapsible-header">
+                              <i class="material-icons circle red lighten-1"></i>
+                              <span class="black-text">Food & Drinks</span><!-- 在这里传入类别/pass the expense class here -->
+                              <a class="secondary-content red-text text-accent-3">-￡18.23</a><!-- 在这里传入参数/pass the number here -->
+                            </div>
+                            <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                              <p>Category:Food&Drinks ;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                            </div>
+                          </li>
+                          <li class="collection-item avatar">
+                            <div class="collapsible-header">
+                              <i class="material-icons circle green"></i>
+                              <span class="black-text">Clothing</span><!-- 在这里传入类别/pass the expense class here -->
+                              <a href="#!" class="secondary-content red-text text-accent-3">-￡58.23</a><!-- 在这里传入参数/input the number here -->
+                            </div>
+                            <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                              <p>Category:Clothing ;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                            </div>
+                          </li>
+                          <li class="collection-item avatar">
+                            <div class="collapsible-header">
+                              <i class="material-icons circle blue"></i>
+                              <span class="black-text">Transportation</span><!-- 在这里传入类别/pass the expense class here -->
+                              <a href="#!" class="secondary-content red-text text-accent-3">-￡10.26</a><!-- 在这里传入参数/input the number here -->
+                            </div>
+                            <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                              <p>Category:Transportation ;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                            </div>
+
+                          </li>
+                          <li class="collection-item avatar">
+                            <div class="collapsible-header">
+                              <i class="material-icons circle yellow"></i>
+                              <span class="black-text">Entertainment</span><!-- 在这里传入类别/pass the expense class here -->
+                              <a href="#!" class="secondary-content red-text text-accent-3">-￡28.23</a><!-- 在这里传入参数/input the number here -->
+                            </div>
+                            <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                              <p>Category:Entertainment ;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                            </div>
+
+                          </li>
+                          <li class="collection-item avatar">
+                            <div class="collapsible-header">
+                              <i class="material-icons circle red accent-2"></i>
+                              <span class="black-text">Groceries</span><!-- 在这里传入类别/pass the expense class here -->
+                              <a href="#!" class="secondary-content red-text text-accent-3">-￡8.23</a><!-- 在这里传入参数/input the number here -->
+                            </div>
+                            <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                              <p>Category:Groceries ;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+
+                            </div>
+                          </li>
+                          <li class="collection-item avatar">
+                            <div class="collapsible-header">
+                              <i class="material-icons circle green accent-2"></i>
+                              <span class="black-text">Household Items</span><!-- 在这里传入类别/pass the expense class here -->
+                              <a href="#!" class="secondary-content red-text text-accent-3">-￡8.23</a><!-- 在这里传入参数/input the number here -->
+                            </div>
+                            <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                              <p>Category:Household Items ;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                            </div>
+                           </li>
+                           <li class="collection-item avatar">
+                             <div class="collapsible-header">
+                             <i class="material-icons circle blue accent-2"></i>
+                             <span class="black-text">Communication</span><!-- 在这里传入类别/pass the expense class here -->
+                             <a href="#!" class="secondary-content red-text text-accent-3">-￡8.23</a><!-- 在这里传入参数/input the number here -->
+                               </div>
+                             <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                             <p>Category:Communication;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                           </div>
+
+                           </li>
+                             <li class="collection-item avatar">
+                             <div class="collapsible-header">
+                             <i class="material-icons circle pink"></i>
+                             <span class="black-text">Leisure</span><!-- 在这里传入类别/pass the expense class here -->
+                             <a href="#!" class="secondary-content red-text text-accent-3">-￡8.23</a><!-- 在这里传入参数/input the number here -->
+                           </div>
+                           <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                             <p>Category:Leisure;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                           </div>
+                           </li>
+                             <li class="collection-item avatar">
+                             <div class="collapsible-header">
+                             <i class="material-icons circle indigo lighten-3"></i>
+                             <span class="black-text">Rent</span><!-- 在这里传入类别/pass the expense class here -->
+                             <a href="#!" class="secondary-content red-text text-accent-3">-￡8.23</a><!-- 在这里传入参数/input the number here -->
+                           </div>
+                           <div class="collapsible-body"><!-- 在下面传入数据库查询得到的record的所有信息 -->
+                             <p>Category:Rent;Store:ABC ;Note: ;Date:2018/3/1 ;Time:12:08 </p>
+                           </div>
+                           </li>
+                         </ul>
+
+                               </div>
+                             </div>
+                        </div>
+
+                           </div>
+                             <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+                             <script src="js/jquery.leanModal.min.js" type="text/javascript"></script>
+                             <script type="text/javascript" src="js/ajax.js"></script>
+
+                             <script type="text/javascript" src="js/materialize.min.js"></script>
+                             <script src="js/script.js"></script>
+                               <script type="text/javascript">
+                               $(document).ready(function() {
+                           $('select').material_select();
+                         });
+                                $(document).ready(function(){
+                           $('.collapsible').collapsible();
+                         });
+
+                              </script>
+                        </body>
+                        </html>

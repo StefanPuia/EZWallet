@@ -1,3 +1,30 @@
 main {
 	padding-top: 2em;
 }
+
+body {
+	margin: 0;
+	padding: 0;
+
+	padding-bottom: 10em;
+}
+
+.hidden {
+	display: none;
+}
+
+.hide-on-signout {
+	display: none;
+}
+
+.g-signin2{
+  width: 100%;
+}
+
+.g-signin2 > div{
+  margin: 0 auto;
+}
+
+#login-button {
+	padding-top: 3em;
+}
