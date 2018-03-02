@@ -126,3 +126,8 @@ module.exports.resultValid = function(result){
         return false;
     }
 }
+
+module.exports.getFirstDayOfMonth = function() {
+    let date = new Date(), y = date.getFullYear(), m = date.getMonth() + 1;
+    return `${y}-${m}-1`;
+}
