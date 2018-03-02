@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<%- include("partials/head") %>
+	<body>
+		<%- include("partials/header") %>
+		<main>
+			<div class="container center-align">
+				<h3>Add record</h3>
+				<div class="row">
+					<button class="btn col s6 green accent-2 white-text">INCOME</button>
+					<button class="btn col s6 green accent-4 white-text">EXPENSE</button>
+				</div>
+				<div class="row">
+					<form class="col s12">
+						<div class="row">
+							<div class="input-field col s12">
+								<!-- <i class="material-icons prefix">restaurant</i> -->
+								<select id="transaction_category">
+									<option value="" disabled selected>Select a category</option>
+									<option value="1">Food&Drinks</option>
+									<option value="2">Transportation</option>
+								</select>
+								<label>Category</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s12">
+								<input value="" id="transaction_description" type="text">
+								<label for="transaction_description">Description</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s6">
+								<input value="" id="transaction_date" class="datepicker" type="text">
+								<label for="transaction_date">Date</label>
+							</div>
+							<div class="input-field col s6">
+								<input value="" id="transaction_time" class="timepicker" type="text">
+								<label for="transaction_time">Time</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="file-field input-field col s12">
+								<div class="btn green accent-4">
+									<span>File</span>
+									<input type="file">
+								</div>
+								<div class="file-path-wrapper">
+									<input class="file-path validate" type="text">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s12">
+								<button type="button" class="btn green accent-4">Add</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</body>
+</html>
