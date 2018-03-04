@@ -15,6 +15,7 @@ function fillDash(month, year){
         let moneySpent = 0;
         for (let i in transactions){
             moneySpent += transactions[i].amount;
+            //fills records
             newRecEl(transactions[i]);
         }
         setRemaining(moneySpent);
