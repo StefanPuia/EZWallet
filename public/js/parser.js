@@ -1,9 +1,10 @@
 'use strict';
-function calcBudget(month, year){
+function fillDash(month, year){
     let date = {
         'month': month,
         'year': year
     };
+
     if(!month || !year){
         let d = new Date();
         date.month = d.getMonth() + 1;
@@ -14,10 +15,15 @@ function calcBudget(month, year){
         let moneySpent = 0;
         for (let i in transactions){
             moneySpent += transactions[i].amount;
-            console.log(transactions[i]);
+            newRecEl(transactions[i]);
         }
-        getBudget(function(budget){
-            $('#current-balance').innerText = "£" + (budget - moneySpent);
-        });
+        setRemaining(moneySpent);
+    });
+}
+
+function setRemaining(moneySpent){
+    getBudget(function(budget){
+        let onScreenBudget = document.getElementById("current-balance")
+        onScreenBudget.innerText= "£" + (budget - moneySpent);
     });
 }
