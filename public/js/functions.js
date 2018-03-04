@@ -35,7 +35,6 @@ async function callServer(fetchURL, options, callback) {
     callback = (typeof callback === 'undefined') ? () => {} : callback;
 
     const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-
     const fetchOptions = {
         credentials: 'same-origin',
         method: 'get',
@@ -108,7 +107,7 @@ async function signOut() {
  * redirects the user when the login at /login succeeds
  */
 function mainSignIn() {
-    window.location = "/dashboard";
+    window.location = "/";
 }
 
 /**
