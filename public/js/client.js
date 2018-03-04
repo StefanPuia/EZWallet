@@ -28,9 +28,9 @@ window.addEventListener('load', async function() {
     $('#nav-log-mobile').on('click', signOut);
 
     // send the user to /login if not logged in
-    //if (location.pathname != "/login" && await !gapi.auth2.getAuthInstance().isSignedIn.get()) {
-    //    signOut();
-    //}
+    if (location.pathname != "/login" && await !gapi.auth2.getAuthInstance().isSignedIn.get()) {
+       signOut();
+    }
     fillDash();
 })
 
