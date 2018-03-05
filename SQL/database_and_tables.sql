@@ -17,11 +17,11 @@ create table category (
 
 create table transaction (
   id int primary key auto_increment,
-  user foreign key,
+  user int not null,
   amount float not null,
   description varchar(100),
   tdate date not null,
-  category foreign key,
+  category int not null,
   image varchar(200),
   foreign key(category) references category(id),
   foreign key(user) references user(id)
@@ -29,8 +29,8 @@ create table transaction (
 
 create table budget (
     id int primary key auto_increment,
-    user foreign key,
-    bdate date not null,
+    user int not null,
+    bdate timestamp not null,
     budget float not null,
     foreign key(user) references user(id)
 );
