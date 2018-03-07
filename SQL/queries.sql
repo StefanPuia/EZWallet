@@ -13,3 +13,7 @@ select distinct transaction.amount as Amount, transaction.description as Descrip
   inner join category on transaction.category = category.id
   where transaction.user = 1
   order by transaction.tdate asc;
+
+update budget
+  set amount = 100
+  where user = 1;
