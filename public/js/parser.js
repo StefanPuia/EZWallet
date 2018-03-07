@@ -30,11 +30,15 @@ function setRemaining(moneySpent,transactions){
     });
 }
 
-
+//returns data in the format for use with Google chart api
 function calcTotals(moneySpent,transactions,budget){
     let totals = {
         Remaining: budget - moneySpent
     };
+
+    let chartData = [
+        ["Categories","Budget Spent"]
+    ];
 
     for(let i in transactions){
         if(totals[transactions[i].Category]){
@@ -44,10 +48,6 @@ function calcTotals(moneySpent,transactions,budget){
             totals[transactions[i].Category] += transactions[i].Amount;
         }
     }
-
-    let chartData = [
-        ["Categories","Budget Spent"]
-    ];
 
     Object.keys(totals).map(function(k) {chartData.push([k,totals[k]])});
     drawDashChart(chartData);
