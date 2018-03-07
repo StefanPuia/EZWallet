@@ -34,11 +34,25 @@ window.addEventListener('load', async function() {
             signOut();
         }
     })
+    google.charts.load('current', {'packages':['corechart']});
     fillDash();
 })
 
 
-// this function is sed to ad a new list item to the list of transactions on the Dashboard
+//
+function drawDashChart(inputData){
+    let data = google.visualization.arrayToDataTable(inputData);
+
+    let options = {
+              title: 'Monthly Spending'
+            };
+
+    let chart = new google.visualization.PieChart(document.getElementById('expenses-chart'));
+    chart.draw(data, options);
+}
+
+
+// this function is used to add a new list item to the list of transactions on the Dashboard
 function newRecEl(transaction){
     let record = document.createElement("li");
     record.classList.add("collection-item","avatar");
@@ -55,21 +69,21 @@ function newRecEl(transaction){
 
     let category = document.createElement("b");
     category.classList.add("title");
-    category.innerText= "test";
+    category.innerText= transaction.Category;
     anchor.appendChild(category);
 
     let details = document.createElement("p");
-    details.innerHTML = transaction.description;
+    details.innerHTML = transaction.Description;
     details.appendChild(document.createElement("br"));
     anchor.appendChild(details);
 
     let date = document.createElement("small");
-    date.innerText = transaction.tdate.substring(0, 10);
+    date.innerText = transaction.Date.substring(0, 10);
     details.appendChild(date);
 
     let amount = document.createElement("span");
     amount.classList.add("secondary-content","red-text","text-accent-3");
-    amount.innerText = "£" + transaction.amount;
+    amount.innerText = "£" + transaction.Amount;
     details.appendChild(amount);
 
     let list = document.getElementById("recordList");

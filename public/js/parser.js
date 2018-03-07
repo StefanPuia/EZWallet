@@ -13,18 +13,45 @@ function fillDash(month, year){
 
     getTransactions(date,function(transactions){
         let moneySpent = 0;
-        for (let i in transactions){
-            moneySpent += transactions[i].amount;
+        for(let i in transactions){
+            moneySpent += transactions[i].Amount;
             //fills records
             newRecEl(transactions[i]);
         }
-        setRemaining(moneySpent);
+        setRemaining(moneySpent,transactions);
     });
 }
 
-function setRemaining(moneySpent){
+function setRemaining(moneySpent,transactions){
     getBudget(function(budget){
         let onScreenBudget = document.getElementById("current-balance")
         onScreenBudget.innerText= "£" + (budget - moneySpent);
+        calcTotals(moneySpent,transactions,budget);
     });
+}
+
+
+function calcTotals(moneySpent,transactions,budget){
+    let totals = {
+        Remaining: budget - moneySpent
+    };
+
+    for(let i in transactions){
+        if(totals[transactions[i].Category]){
+            totals[transactions[i].Category] += transactions[i].Amount;
+        }else{
+            totals[transactions[i].Category] = 0;
+            totals[transactions[i].Category] += transactions[i].Amount;
+        }
+    }
+
+    let chartData = [
+        ["Categories","Budget Spent"]
+    ];
+
+    Object.keys(totals).map(function(k) {chartData.push([k,totals[k]])});
+    drawDashChart(chartData);
+
+    ;
+
 }
