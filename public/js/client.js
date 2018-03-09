@@ -34,12 +34,28 @@ window.addEventListener('load', async function() {
             signOut();
         }
     })
-    google.charts.load('current', {'packages':['corechart']});
-    fillDash();
 })
 
 
-//
+//function used on edit page to send transactions to the server
+function sendTrans(){
+    let fetchURL = 'api/transaction/';
+    let payload = {
+        amount: document.querySelector('#transaction_amount').value,
+        description: document.querySelector('#transaction_description').value,
+        tdate: document.querySelector('#transaction_date').value,
+        category: $('#transaction_category').val()
+    };
+    let data = JSON.stringify(payload);
+    let options = {
+        body: data,
+        method: "POST"
+    }
+    callServer(fetchURL,options,(res) =>{
+        console.log(res);
+    });
+}
+
 function drawDashChart(inputData){
     let data = google.visualization.arrayToDataTable(inputData);
 

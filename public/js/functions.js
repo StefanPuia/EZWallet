@@ -34,7 +34,8 @@ async function callServer(fetchURL, options, callback) {
     options = (typeof options === 'undefined') ? {} : options;
     callback = (typeof callback === 'undefined') ? () => {} : callback;
 
-    const token = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+    const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+
     const fetchOptions = {
         credentials: 'same-origin',
         method: 'get',
@@ -44,6 +45,8 @@ async function callServer(fetchURL, options, callback) {
             'Accept': 'application/json'
         },
     };
+
+
 
     Object.assign(fetchOptions, options);
 
@@ -91,6 +94,9 @@ function signIn() {
     callServer('api/user', {}, function(data) {
         console.log(data);
     });
+    if(window.location.pathname == "/"){
+        fillDash();
+    }
 }
 
 /**

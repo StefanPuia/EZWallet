@@ -99,7 +99,7 @@ module.exports.getUserId = function(profile, callback) {
 const postTransSchema = Joi.object().keys({
     amount: Joi.number().min(0).precision(2).required(),
     description: Joi.string().max(100).optional(),
-    tdate: Joi.date().iso().max('now').required(),
+    tdate: Joi.date().max('now').required(),
     category: Joi.number().integer().min(0).required(),
     image: Joi.string().optional()
 });
