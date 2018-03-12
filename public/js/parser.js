@@ -37,7 +37,7 @@ function calcTotals(moneySpent,transactions,budget){
 
     if(remaining >= 0){
         totals = {
-            Remaining: remainning
+            Remaining: remaining
         };
     }
 
