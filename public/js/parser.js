@@ -32,9 +32,14 @@ function setRemaining(moneySpent,transactions){
 
 //returns data in the format for use with Google chart api
 function calcTotals(moneySpent,transactions,budget){
-    let totals = {
-        Remaining: budget - moneySpent
-    };
+    let remaining = budget - moneySpent;
+    let totals = {};
+
+    if(remaining >= 0){
+        totals = {
+            Remaining: remainning
+        };
+    }
 
     let chartData = [
         ["Categories","Budget Spent"]
