@@ -1,3 +1,18 @@
+'use strict';
+
+/**
+ * Creates a new [tag] element and assigns the provided attributes to it
+ * @param  {String} tag name
+ * @param  {Object} attributes object to be applied
+ * @return {NodeElement} the new element
+ */
+function newEl(tag, attr = {}) {
+    let el = document.createElement(tag);
+    Object.assign(el, attr);
+    Object.assign(el.style, attr.style);
+    return el;
+}
+
 /**
  * get the value of a url query parameter
  * @param {String} field parameter name

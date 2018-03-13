@@ -3,25 +3,6 @@ window.addEventListener('load', async function() {
     // initialize materialize components
     $(".button-collapse").sideNav();
     $('select').material_select();
-    $('.datepicker').pickadate({
-        selectMonths: true, // Creates a dropdown to control month
-        selectYears: 15, // Creates a dropdown of 15 years to control year,
-        today: 'Today',
-        clear: 'Clear',
-        close: 'Ok',
-        closeOnSelect: false // Close upon selecting a date,
-    });
-    $('.timepicker').pickatime({
-        default: 'now', // Set default time: 'now', '1:30AM', '16:30'
-        fromnow: 0, // set default time to * milliseconds from now (using with default = 'now')
-        twelvehour: false, // Use AM/PM or 24-hour format
-        donetext: 'OK', // text for done-button
-        cleartext: 'Clear', // text for clear-button
-        canceltext: 'Cancel', // Text for cancel-button
-        autoclose: false, // automatic close timepicker
-        ampmclickable: true, // make AM PM clickable
-        aftershow: function() {} //Function for after opening timepicker
-    });
 
     // add click events for log in-out buttons
     $('#nav-log').on('click', signOut);
@@ -35,37 +16,6 @@ window.addEventListener('load', async function() {
         }
     })
 })
-
-
-//function used on edit page to send transactions to the server
-function sendTrans(){
-    let fetchURL = 'api/transaction/';
-    let payload = {
-        amount: document.querySelector('#transaction_amount').value,
-        description: document.querySelector('#transaction_description').value,
-        tdate: document.querySelector('#transaction_date').value,
-        category: $('#transaction_category').val()
-    };
-    let data = JSON.stringify(payload);
-    let options = {
-        body: data,
-        method: "POST"
-    }
-    document.querySelector('#sendTButton').innerText = "Adding";
-    callServer(fetchURL,options,(res) =>{
-        if(res.response != "Created"){
-            document.querySelector('#sendTButton').innerText = "Error";
-            setTimeout(()=>{
-                document.querySelector('#sendTButton').innerText = "Add";
-            },2000);
-        }else{
-            document.querySelector('#sendTButton').innerText = "Successful";
-            setTimeout(()=>{
-                document.querySelector('#sendTButton').innerText = "Add";
-            },2000);
-        }
-    });
-}
 
 function drawDashChart(inputData){
     let data = google.visualization.arrayToDataTable(inputData);

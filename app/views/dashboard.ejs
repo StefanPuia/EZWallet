@@ -4,6 +4,9 @@
 	<body>
 		<%- include("partials/header") %>
 		<main>
+			<div class="fixed-action-btn horizontal">
+				<a href="/edit" class="btn-floating btn-large waves-effect waves-light green accent-4"><i class="material-icons">add</i></a>
+			</div>
 			<div class="container center">
 				<h3>Dashboard</h3>
 				<div class="row">
@@ -19,7 +22,7 @@
 						<h5>Records</h5>
 						<ul id="recordList" class="collection left-align black-text">
 							<li class="collection-item">
-								<a href="/edit" class="black-text">
+								<a href="/records" class="black-text">
 									Show More...
 									<span class="secondary-content">
 										<i class="material-icons">send</i>
