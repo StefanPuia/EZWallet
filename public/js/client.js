@@ -51,8 +51,19 @@ function sendTrans(){
         body: data,
         method: "POST"
     }
+    document.querySelector('#sendTButton').innerText = "Adding";
     callServer(fetchURL,options,(res) =>{
-        console.log(res);
+        if(res.response != "Created"){
+            document.querySelector('#sendTButton').innerText = "Error";
+            setTimeout(()=>{
+                document.querySelector('#sendTButton').innerText = "Add";
+            },2000);
+        }else{
+            document.querySelector('#sendTButton').innerText = "Successful";
+            setTimeout(()=>{
+                document.querySelector('#sendTButton').innerText = "Add";
+            },2000);
+        }
     });
 }
 
