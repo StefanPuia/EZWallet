@@ -13,18 +13,52 @@ function fillDash(month, year){
 
     getTransactions(date,function(transactions){
         let moneySpent = 0;
-        for (let i in transactions){
-            moneySpent += transactions[i].amount;
-            //fills records
-            newRecEl(transactions[i]);
+        for(let i in transactions){
+            moneySpent += transactions[i].Amount;
+            //fills records for firts 5 transactions
+            if(i < 5){
+                newRecEl(transactions[i]);
+            }
         }
-        setRemaining(moneySpent);
+        setRemaining(moneySpent,transactions);
     });
 }
 
-function setRemaining(moneySpent){
+function setRemaining(moneySpent,transactions){
     getBudget(function(budget){
         let onScreenBudget = document.getElementById("current-balance")
         onScreenBudget.innerText= "£" + (budget - moneySpent);
+        calcTotals(moneySpent,transactions,budget);
     });
+}
+
+//returns data in the format for use with Google chart api
+function calcTotals(moneySpent,transactions,budget){
+    let remaining = budget - moneySpent;
+    let totals = {};
+
+    if(remaining >= 0){
+        totals = {
+            Remaining: remaining
+        };
+    }
+
+    let chartData = [
+        ["Categories","Budget Spent"]
+    ];
+
+    for(let i in transactions){
+        if(totals[transactions[i].Category]){
+            totals[transactions[i].Category] += transactions[i].Amount;
+        }else{
+            totals[transactions[i].Category] = 0;
+            totals[transactions[i].Category] += transactions[i].Amount;
+        }
+    }
+
+    Object.keys(totals).map(function(k) {chartData.push([k,totals[k]])});
+    drawDashChart(chartData);
+
+    ;
+
 }

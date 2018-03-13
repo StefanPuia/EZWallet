@@ -1,3 +1,18 @@
+'use strict';
+
+/**
+ * Creates a new [tag] element and assigns the provided attributes to it
+ * @param  {String} tag name
+ * @param  {Object} attributes object to be applied
+ * @return {NodeElement} the new element
+ */
+function newEl(tag, attr = {}) {
+    let el = document.createElement(tag);
+    Object.assign(el, attr);
+    Object.assign(el.style, attr.style);
+    return el;
+}
+
 /**
  * get the value of a url query parameter
  * @param {String} field parameter name
@@ -34,7 +49,8 @@ async function callServer(fetchURL, options, callback) {
     options = (typeof options === 'undefined') ? {} : options;
     callback = (typeof callback === 'undefined') ? () => {} : callback;
 
-    const token = await gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+    const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+
     const fetchOptions = {
         credentials: 'same-origin',
         method: 'get',
@@ -44,6 +60,8 @@ async function callServer(fetchURL, options, callback) {
             'Accept': 'application/json'
         },
     };
+
+
 
     Object.assign(fetchOptions, options);
 
@@ -91,6 +109,9 @@ function signIn() {
     callServer('api/user', {}, function(data) {
         console.log(data);
     });
+    if(window.location.pathname == "/"){
+        fillDash();
+    }
 }
 
 /**
