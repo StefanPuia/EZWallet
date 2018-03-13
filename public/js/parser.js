@@ -15,8 +15,10 @@ function fillDash(month, year){
         let moneySpent = 0;
         for(let i in transactions){
             moneySpent += transactions[i].Amount;
-            //fills records
-            newRecEl(transactions[i]);
+            //fills records for firts 5 transactions
+            if(i < 5){
+                newRecEl(transactions[i]);
+            }
         }
         setRemaining(moneySpent,transactions);
     });
