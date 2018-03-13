@@ -147,24 +147,19 @@ module.exports = function(app) {
     app.get('/api/transaction', function(req, res) {
         util.getUserId(req.user, function(err, user) {
             if (user) {
-                let columns = ['id', 'amount', 'description', 'tdate', 'category', 'image'];
-                let sql;
+                let sql = "select transaction.amount as Amount, transaction.description as Description, transaction.tdate as Date, category.cname as Category, transaction.image as Image from transaction inner join category on transaction.category = category.id";
                 let inserts;
                 //adds date filter if perameters are present
                 if (req.query.month == undefined || req.query.year == undefined) {
-                    sql = 'SELECT ?? FROM ?? WHERE ?? = ?';
-                    inserts = [columns, 'transaction', 'user', user.id];
+                    sql += 'WHERE transaction.user = ?';
+                    inserts = [user.id];
                 } else {
-                    sql = 'SELECT ?? FROM ?? WHERE ?? = ? AND MONTH(tdate) = ? AND YEAR(tdate) = ?';
-                    inserts = [columns, 'transaction', 'user', user.id, req.query.month, req.query.year];
+                    sql += ' WHERE transaction.user = ? AND MONTH(transaction.tdate) = ? AND YEAR(transaction.tdate) = ?';
+                    inserts = [user.id, req.query.month, req.query.year];
                 }
 
                 util.query(sql, inserts, function(results) {
-                    if (results.length > 0) {
                         res.status(200).send(results);
-                    } else {
-                        res.sendStatus(404);
-                    }
                 });
             } else {
                 res.sendStatus(401);
@@ -237,6 +232,16 @@ module.exports = function(app) {
             } else {
                 res.sendStatus(401);
             }
+        })
+    })
+
+    /**
+     * GET /api/category
+     * get all categories from the database
+     */
+    app.get('/api/category', function(req, res) {
+        util.query('SELECT id, cname FROM category ORDER BY cname', [], function(results) {
+            res.json(results);
         })
     })
 }
