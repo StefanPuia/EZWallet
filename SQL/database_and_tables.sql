@@ -16,6 +16,15 @@ create table category (
   icon varchar(100)
 );
 
+insert into `category` (`id`, `cname`, `colour`, `icon`) values
+  (0, 'Other', 'gray', NULL),
+  (1, 'Groceries', 'red', 'local_grocery_store'),
+  (3, 'Transport', 'blue', 'directions_bus'),
+  (4, 'Clothing', 'yellow', 'local_offer'),
+  (5, 'Leisure', 'orange', 'local_play'),
+  (6, 'Household Items', 'purple', 'home'),
+  (7, 'Entertainment', 'green', 'local_play');
+
 create table transaction (
   id int primary key auto_increment,
   user int not null,
