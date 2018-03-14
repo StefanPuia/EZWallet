@@ -114,7 +114,7 @@ module.exports = function(app) {
             if (user) {
                 let sql = `SELECT 
                 transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
-                category.cname AS category, category.icon, category.colour
+                category.id AS cid, category.cname AS category, category.icon, category.colour
                 FROM transaction 
                 INNER JOIN category 
                     ON transaction.category = category.id
@@ -170,7 +170,7 @@ module.exports = function(app) {
                 let columns = ['id', 'amount', 'category', 'description', 'tdate', 'image']
                 util.query(`SELECT 
                     transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
-                    category.cname AS category, category.icon, category.colour
+                    category.id AS cid, category.cname AS category, category.icon, category.colour
                     FROM transaction 
                     INNER JOIN category 
                         ON transaction.category = category.id
@@ -198,10 +198,10 @@ module.exports = function(app) {
                 let valiResult = util.validateTrans(req);
                 //runs sql query if request has valid body values
                 if (util.resultValid(valiResult)) {
-                    let values = [req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image]
+                    let inserts = [req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image, req.params.id, user.id]
                     util.query(`UPDATE transaction 
-                            SET amout = ?, description = ?, tdate = ?, category = ?, image = ?
-                            WHERE id = ? AND user = ?`, [values, req.body.id, user.id], function(results) {
+                            SET amount = ?, description = ?, tdate = ?, category = ?, image = ?
+                            WHERE id = ? AND user = ?`, inserts, function(results) {
                         res.sendStatus(200);
                     });
                 } else {
