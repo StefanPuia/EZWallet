@@ -64,10 +64,10 @@ module.exports.findOrCreate = function(profile, callback) {
                 let user = {
                     fname: profile.name.givenName,
                     lname: profile.name.familyName,
-                    email: profile.emails[0].value,
-                    budget: 0
+                    email: profile.emails[0].value
                 }
                 mysqlConnection.query('INSERT INTO user SET ?', user, function(err, newUser) {
+                    if(err) throw err;
                     user.id = newUser.insertId;
 
                     let budget = {
