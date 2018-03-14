@@ -1,3 +1,11 @@
+Contributors
+------------
+* StefanPuia: UP823744 Adrian Puia
+* JamesPCoyle: UP741525 James Coyle
+* ORogers: UP805988 Oliver Rogers
+* DOkenla: UP817474 David Okenla
+* budding-lan: UP828586 Jiaqi Lan
+
 # EZWallet
 
 Install
@@ -31,6 +39,7 @@ To stop the server (Ctrl+C or Command+C):
 ^C
 ```
 
+<i><b>Note:</b> The database is currently remote, if there seem to be any problems with the pages not loading or errors appearing in the console, install a local MySQL server, update /app/config/index.js:9 to point at the local database and import the file /SQL/database_and_tables.sql</i>
 
 # Development and deployment rules
 

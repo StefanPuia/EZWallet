@@ -13,7 +13,7 @@ function saveSettings() {
     if (budget > 0) {
     	delete localStorage.isNewAccount;
     	setBudget(budget, function(data) {
-    		// window.location = '/';
+    		window.location = '/';
     	})
     }
 }

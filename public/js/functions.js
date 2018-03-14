@@ -281,7 +281,7 @@ function newRecEl(transaction) {
     anchor.appendChild(details);
 
     let date = newEl('small', {
-        textContent: transaction.date
+        textContent: pullDate(transaction.date) + ' ' + pullTime(transaction.date),
     });
     anchor.appendChild(date);
 
@@ -376,7 +376,12 @@ function calcTotals(budget, transactions) {
  */
 function pullDate(date) {
     let d = new Date(date);
-    return d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear(); 
+
+    let day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+    let month = d.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let year = d.getFullYear();
+    return  month + '/' + day + '/' + year; 
 }
 
 /**
@@ -386,5 +391,7 @@ function pullDate(date) {
  */
 function pullTime(date) {
     let d = new Date(date);
-    return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    let hours = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+    let minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
+    return hours + ':' + minutes;
 }
