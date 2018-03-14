@@ -72,7 +72,7 @@ module.exports.findOrCreate = function(profile, callback) {
 
                     let budget = {
                         user: user.id,
-                        bdate: new Date(),
+                        bdate: exports.getFirstDayOfMonth(),
                         budget: 0
                     }
                     mysqlConnection.query('INSERT INTO budget SET ?', budget, function(err, newBudget) {

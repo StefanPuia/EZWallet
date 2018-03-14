@@ -7,14 +7,13 @@ window.addEventListener('load', function() {
     callServer('/api/category', {}, function(categories) {
         let select = $('#transaction_category');
         categories.forEach(function(category) {
-                select.append(newEl('option', {
-                    value: category.id,
-                    textContent: category.cname
-                }))
-            })
+            select.append(newEl('option', {
+                value: category.id,
+                textContent: category.cname
+            }))
+        })
+        activateJQueryPlugins();
     });
-
-    activateJQueryPlugins();
 
     $('#transaction_set_income').on('click', setIncome);
     $('#transaction_set_expense').on('click', setExpense);
