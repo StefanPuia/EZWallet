@@ -285,10 +285,11 @@ function newRecEl(transaction) {
     });
     anchor.appendChild(date);
 
+    let transactionAmount = transaction.amount > 0 ? '£' + transaction.amount : '-£' + transaction.amount * -1;
     let transactionTextColour = transaction.amount > 0 ? 'green-text' : 'red-text';
     let amount = newEl('span', {
         classList: 'secondary-content text-accent-3 ' + transactionTextColour,
-        textContent: '£' + transaction.amount
+        textContent: transactionAmount
     });
     details.appendChild(amount);
 

@@ -128,6 +128,13 @@ function sendTrans() {
 		category = 0;
 	}
 
+    if($('#transaction_amount').val() == 0) {
+        $('#transaction_amount').addClass('invalid');
+        return;
+    } else {
+        $('#transaction_amount').removeClass('invalid');
+    }
+
     let payload = {
         amount: $('#transaction_amount').val(),
         description: $('#transaction_description').val() ? $('#transaction_description').val() : ' ',
