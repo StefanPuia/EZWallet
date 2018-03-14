@@ -20,7 +20,9 @@ window.addEventListener('load', function() {
     $('#transaction_set_expense').on('click', setExpense);
     $('#transaction_amount').on('input', setAmountSign);
 
+    // if there is an id in the url, load the transaction
     if(getParameterValue('edit')) {
+        // change the buttons
         $('#page-title').text('Edit record');
         $('#sendTButton').text('Save');
         $('#sendTButton').on('click', saveTrans);
@@ -29,24 +31,28 @@ window.addEventListener('load', function() {
         $('#deleteTButton').on('click', deleteTrans);
 
         callServer('/api/transaction/' + getParameterValue('edit'), {}, function(transaction) {
-            $('#transaction_amount').val(transaction.amount);
+            // if there is a transaction at that id, load it
+            if(transaction) {
+                $('#transaction_amount').val(transaction.amount);
 
-            $('#transaction_category').val(transaction.cid);
+                $('#transaction_category').val(transaction.cid);
 
-            $('#transaction_description').val(transaction.description);
+                $('#transaction_description').val(transaction.description);
 
-            $('#transaction_date').val(pullDate(transaction.date));
-            $('#transaction_time').val(pullTime(transaction.date));
+                $('#transaction_date').val(pullDate(transaction.date));
+                $('#transaction_time').val(pullTime(transaction.date));
 
-            if(transaction.amount < 0) {
-                setExpense();
-            } else {
-                setIncome();
+                if(transaction.amount < 0) {
+                    setExpense();
+                } else {
+                    setIncome();
+                }
+
+                activateJQueryPlugins();
             }
-
-            activateJQueryPlugins();
-
-
+            else {
+                window.location = '/';
+            }
         })
     } else {
         $('#sendTButton').on('click', sendTrans);
@@ -149,6 +155,10 @@ function sendTrans() {
     });
 }
 
+/**
+ * delete a transaction
+ * asking for confirmation
+ */
 function deleteTrans() {
     let id = getParameterValue('edit');
     if(id && window.confirm('Are you sure you want to delete this transaction? This action is irreversible!')) {
@@ -158,6 +168,9 @@ function deleteTrans() {
     }
 }
 
+/**
+ * save transaction
+ */
 function saveTrans() {
     let currentTime = new Date();
     let time = $('#transaction_time').val();
@@ -198,6 +211,9 @@ function saveTrans() {
     });
 }
 
+/**
+ * activate all JQuery plugins and reinitialize all inputs
+ */
 function activateJQueryPlugins() {
     // activate the select jQuery plugin
     $('select').material_select();

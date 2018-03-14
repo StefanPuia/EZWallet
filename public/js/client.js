@@ -14,5 +14,8 @@ window.addEventListener('load', async function() {
         if (location.pathname != "/login" && logged === false) {
             signOut();
         }
+        if(location.pathname != '/settings' && logged === true && localStorage.isNewAccount == 'true') {
+            window.location = '/settings';
+        }
     })
 })

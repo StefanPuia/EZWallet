@@ -146,7 +146,16 @@ async function signOut() {
  * redirects the user when the login at /login succeeds
  */
 function mainSignIn() {
-    window.location = "/";
+    callServer('/api/user', {}, function(data) {
+        if(data.response == 'Created') {
+            localStorage.isNewAccount = 'true';
+            window.location = '/settings';
+        }
+        else {
+            window.location = "/";
+        }
+    });
+    
 }
 
 /**
@@ -328,6 +337,12 @@ function drawChart(inputData, title, container) {
     chart.draw(data, options);
 }
 
+/**
+ * parsing transactions data to be used in the google chart api
+ * @param  {Int} budget
+ * @param  {Array} transactions
+ * @return {Array} parsed array
+ */
 function calcTotals(budget, transactions) {
     let totals = {
         remaining: budget > 0 ? budget : 0
@@ -352,11 +367,21 @@ function calcTotals(budget, transactions) {
     return chartData;
 }
 
+/**
+ * get the date part from a date object
+ * @param  {Date/String} date
+ * @return {String} date in mm/dd/yyyy format
+ */
 function pullDate(date) {
     let d = new Date(date);
     return d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear(); 
 }
 
+/**
+ * get the time from a date object
+ * @param  {Date/String} date
+ * @return {String} time in HH:ii:ss format
+ */
 function pullTime(date) {
     let d = new Date(date);
     return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
