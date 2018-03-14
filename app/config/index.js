@@ -13,11 +13,11 @@ module.exports = {
 		'password': 'cPxD5B8pyY4G'
 	},
 
-	'database2': {
-		'host': '35.205.83.16',
+	'localdatabase': {
+		'host': 'localhost',
 		'database': 'inse',
 		'user': 'root',
-		'password': 'root'
+		'password': ''
 	},
 
 	'public': {
