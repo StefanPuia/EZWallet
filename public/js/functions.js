@@ -1,5 +1,7 @@
 'use strict';
 
+let verbose = true;
+
 /**
  * Creates a new [tag] element and assigns the provided attributes to it
  * @param  {String} tag name
@@ -66,7 +68,7 @@ async function callServer(fetchURL, options, callback) {
     Object.assign(fetchOptions, options);
 
     // log the request
-    // console.log(`${fetchOptions.method} ${fetchURL}`);
+    if (verbose) console.log(`Requested: ${fetchOptions.method.toUpperCase()} ${fetchURL}`);
 
     const response = await fetch(fetchURL, fetchOptions);
     if (!response.ok) {
@@ -92,7 +94,7 @@ async function callServer(fetchURL, options, callback) {
     }
 
     // log the results
-    // console.log(JSON.stringify(data, null, 4) + '\n\n');
+    if (verbose) console.log("Recieved: ", data);
 
     callback(data);
 }
@@ -107,11 +109,8 @@ function signIn() {
         el.style.display = 'block';
     })
     callServer('api/user', {}, function(data) {
-        console.log(data);
+        // console.log(data);
     });
-    if(window.location.pathname == "/"){
-        fillDash();
-    }
 }
 
 /**
@@ -220,25 +219,116 @@ function getTransaction(id, callback) {
     });
 }
 
-function calcBudget(month, year){
+/**
+ * create a new transaction element
+ * @param  {Object} transaction
+ * @return {Node}
+ */
+function newRecEl(transaction) {
+    let record = newEl('li', {
+        classList: 'collection-item avatar'
+    });
+
+    let anchor = newEl('a', {
+        href: '/edit/' + transaction.id,
+        classList: 'black-text'
+    });
+    record.append(anchor);
+
+    let icon = newEl('i', {
+        classList: `material-icons circle ${transaction.colour} lighten-1`,
+        textContent: transaction.icon
+    });
+    anchor.appendChild(icon);
+
+    let category = newEl('b', {
+        classList: 'title',
+        textContent: transaction.category
+    });
+    anchor.appendChild(category);
+
+    let details = newEl('p', {
+        textContent: transaction.description
+    });
+    anchor.appendChild(details);
+
+    let date = newEl('small', {
+        textContent: transaction.date
+    });
+    anchor.appendChild(date);
+
+    let transactionTextColour = transaction.amount > 0 ? 'green-text' : 'red-text';
+    let amount = newEl('span', {
+        classList: 'secondary-content text-accent-3 ' + transactionTextColour,
+        textContent: '£' + transaction.amount
+    });
+    details.appendChild(amount);
+
+    return record;
+}
+
+/**
+ * calculate a month's budget
+ * the current month will be used if none is provided
+ * @param  {Int} month
+ * @param  {Int} year
+ * @return {Int} budget left
+ */
+function calcBudget(month, year, callback) {
     let date = {
-        'month': month,
-        'year': year
+        month: month ? month : new Date().getMonth() + 1,
+        year: year ? year : new Date().getFullYear()
     };
-    if (!month || !year) {
-        let d = new Date();
-        date.month = d.getMonth() + 1;
-        date.year = d.getFullYear();
+
+    getBudget(function(budget) {
+        getTransactions(date, function(transactions) {
+            transactions.forEach(function(transaction) {
+                budget += transaction.amount;
+            })
+            callback(budget);
+        });
+    })
+}
+
+/**
+ * draw a chart
+ * @param  {Object} inputData
+ * @param {String} title
+ * @param  {Node} container
+ */
+function drawChart(inputData, title, container) {
+    let data = google.visualization.arrayToDataTable(inputData);
+
+    let options = {
+        title: title,
+        width: '100%',
+        height: 450
+    };
+
+    let chart = new google.visualization.PieChart(container);
+    chart.draw(data, options);
+}
+
+function calcTotals(budget, transactions) {
+    let totals = {
+        remaining: budget > 0 ? budget : 0
     }
 
-    getTransactions(date, function(transactions) {
-        let moneySpent = 0;
-        for (let i in transactions) {
-            moneySpent += transactions[i].amount;
-            console.log(transactions[i]);
+    let chartData = [
+        ["Categories", "Budget Spent"]
+    ];
+
+    for (let i in transactions) {
+        if (totals[transactions[i].category]) {
+            totals[transactions[i].category] += transactions[i].amount;
+        } else {
+            totals[transactions[i].category] = 0;
+            totals[transactions[i].category] += transactions[i].amount;
         }
-        getBudget(function(budget) {
-            $('#current-balance').text("£" + (budget - moneySpent));
-        });
+    }
+
+    Object.keys(totals).map(function(k) {
+        chartData.push([k, totals[k]])
     });
+    return chartData;
 }
