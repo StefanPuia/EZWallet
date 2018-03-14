@@ -104,7 +104,7 @@ module.exports.getUserId = function(profile, callback) {
 
 //Validation Schemas
 const postTransSchema = Joi.object().keys({
-    amount: Joi.number().min(0).precision(2).required(),
+    amount: Joi.number().precision(2).required(),
     description: Joi.string().max(100).optional(),
     tdate: Joi.date().max('now').required(),
     category: Joi.number().integer().min(0).required(),
