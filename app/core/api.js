@@ -189,6 +189,32 @@ module.exports = function(app) {
     })
 
     /**
+     * POST /api/transaction/:id
+     * update a transaction
+     */
+    app.post('/api/transaction/:id', function(req, res) {
+        util.getUserId(req.user, function(err, user) {
+            if (user) {
+                let valiResult = util.validateTrans(req);
+                //runs sql query if request has valid body values
+                if (util.resultValid(valiResult)) {
+                    let values = [req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image]
+                    util.query(`UPDATE transaction 
+                            SET amout = ?, description = ?, tdate = ?, category = ?, image = ?
+                            WHERE id = ? AND user = ?`, [values, req.body.id, user.id], function(results) {
+                        res.sendStatus(200);
+                    });
+                } else {
+                    //returns input errors as res
+                    res.send(valiResult.error.message).status(400);
+                }
+            } else {
+                res.sendStatus(401);
+            }
+        });
+    })
+
+    /**
      * DELETE /api/transaction/:id
      * @param {Int} id  transaction id
      * delete the transaction with the specified id
