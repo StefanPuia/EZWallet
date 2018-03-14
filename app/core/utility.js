@@ -67,9 +67,19 @@ module.exports.findOrCreate = function(profile, callback) {
                     email: profile.emails[0].value,
                     budget: 0
                 }
-                mysqlConnection.query('INSERT INTO user SET ?', user)
-                user.id = results.insertId;
-                callback(null, user);
+                mysqlConnection.query('INSERT INTO user SET ?', user, function(err, newUser) {
+                    user.id = newUser.insertId;
+
+                    let budget = {
+                        user: user.id,
+                        bdate: exports.getFirstDayOfMonth(),
+                        budget: 0
+                    }
+                    mysqlConnection.query('INSERT INTO budget SET ?', budget, function(err, newBudget) {
+                        callback(-1, user);
+                    })                    
+                })
+                
             } else {
                 callback(null, results[0]);
             }
@@ -97,7 +107,7 @@ module.exports.getUserId = function(profile, callback) {
 
 //Validation Schemas
 const postTransSchema = Joi.object().keys({
-    amount: Joi.number().min(0).precision(2).required(),
+    amount: Joi.number().precision(2).required(),
     description: Joi.string().max(100).optional(),
     tdate: Joi.date().max('now').required(),
     category: Joi.number().integer().min(0).required(),

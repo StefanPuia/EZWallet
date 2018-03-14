@@ -43,7 +43,12 @@ module.exports = function(app) {
     app.get('/api/user', function(req, res) {
         util.findOrCreate(req.user, function(err, user) {
             if (err) {
-                console.log('Error: ' + err);
+                if(err === -1) {
+                    res.status(201).send('Created');
+                }
+                else {
+                    console.log('Error: ' + err);
+                }                
             } else if (user) {
                 res.status(200).json(user);
             } else {
@@ -61,7 +66,12 @@ module.exports = function(app) {
         util.getUserId(req.user, function(err, user) {
             id = user.id;
             util.query('SELECT budget FROM budget WHERE user = ? ORDER BY bdate DESC LIMIT 1', [id], function(results) {
-                res.status(200).json(results[0].budget);
+                if(typeof results[0] == 'undefined') {
+                    res.sendStatus(404);
+                }
+                else {
+                    res.status(200).json(results[0].budget);
+                }
             });
         });
     })
@@ -109,7 +119,7 @@ module.exports = function(app) {
             if (user) {
                 let sql = `SELECT 
                 transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
-                category.cname AS category, category.icon, category.colour
+                category.id AS cid, category.cname AS category, category.icon, category.colour
                 FROM transaction 
                 INNER JOIN category 
                     ON transaction.category = category.id
@@ -165,7 +175,7 @@ module.exports = function(app) {
                 let columns = ['id', 'amount', 'category', 'description', 'tdate', 'image']
                 util.query(`SELECT 
                     transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
-                    category.cname AS category, category.icon, category.colour
+                    category.id AS cid, category.cname AS category, category.icon, category.colour
                     FROM transaction 
                     INNER JOIN category 
                         ON transaction.category = category.id
@@ -181,6 +191,32 @@ module.exports = function(app) {
                 res.sendStatus(401);
             }
         })
+    })
+
+    /**
+     * POST /api/transaction/:id
+     * update a transaction
+     */
+    app.post('/api/transaction/:id', function(req, res) {
+        util.getUserId(req.user, function(err, user) {
+            if (user) {
+                let valiResult = util.validateTrans(req);
+                //runs sql query if request has valid body values
+                if (util.resultValid(valiResult)) {
+                    let inserts = [req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image, req.params.id, user.id]
+                    util.query(`UPDATE transaction 
+                            SET amount = ?, description = ?, tdate = ?, category = ?, image = ?
+                            WHERE id = ? AND user = ?`, inserts, function(results) {
+                        res.sendStatus(200);
+                    });
+                } else {
+                    //returns input errors as res
+                    res.send(valiResult.error.message).status(400);
+                }
+            } else {
+                res.sendStatus(401);
+            }
+        });
     })
 
     /**

@@ -3,7 +3,10 @@
 	<%- include("partials/head") %>
 	<body>
 		<%- include("partials/header") %>
-		<script src="public/js/dashboard.js"></script>
+		<script src="/public/js/dashboard.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi?autoload=
+		{'modules':[{'name':'visualization','version':'1.1','packages':
+		['corechart']}]}"></script>
 		<main>
 			<div class="fixed-action-btn horizontal">
 				<a href="/edit" class="btn-floating btn-large waves-effect waves-light green accent-4"><i class="material-icons">add</i></a>
@@ -35,7 +38,6 @@
 					<div class="col l6 s12">
 						<h5>Expenses Structure</h5>
 						<div id="expenses-chart">
-
 						</div>
 					</div>
 				</div>

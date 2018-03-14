@@ -1,6 +1,4 @@
 window.addEventListener('load', function() {
-	google.charts.load('current', {'packages':['corechart']});
-
 	calcBudget(null, null, function(budget) {
 		$('#current-balance').text('£' + budget);
 

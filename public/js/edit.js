@@ -7,40 +7,55 @@ window.addEventListener('load', function() {
     callServer('/api/category', {}, function(categories) {
         let select = $('#transaction_category');
         categories.forEach(function(category) {
-                select.append(newEl('option', {
-                    value: category.id,
-                    textContent: category.cname
-                }))
-            })
-            // activate the select jQuery plugin
-        $('select').material_select();
-    });
-
-    // activate the datepicker plugin
-    $('.datepicker').pickadate({
-        selectMonths: true, // Creates a dropdown to control month
-        selectYears: 15, // Creates a dropdown of 15 years to control year,
-        today: 'Today',
-        clear: 'Clear',
-        close: 'Ok',
-        closeOnSelect: false // Close upon selecting a date,
-    });
-    // activate the timepicker plugin
-    $('.timepicker').pickatime({
-        default: 'now', // Set default time: 'now', '1:30AM', '16:30'
-        fromnow: 0, // set default time to * milliseconds from now (using with default = 'now')
-        twelvehour: false, // Use AM/PM or 24-hour format
-        donetext: 'OK', // text for done-button
-        cleartext: 'Clear', // text for clear-button
-        canceltext: 'Cancel', // Text for cancel-button
-        autoclose: false, // automatic close timepicker
-        ampmclickable: true, // make AM PM clickable
-        aftershow: function() {} //Function for after opening timepicker
+            select.append(newEl('option', {
+                value: category.id,
+                textContent: category.cname
+            }))
+        })
+        activateJQueryPlugins();
     });
 
     $('#transaction_set_income').on('click', setIncome);
     $('#transaction_set_expense').on('click', setExpense);
     $('#transaction_amount').on('input', setAmountSign);
+
+    // if there is an id in the url, load the transaction
+    if(getParameterValue('edit')) {
+        // change the buttons
+        $('#page-title').text('Edit record');
+        $('#sendTButton').text('Save');
+        $('#sendTButton').on('click', saveTrans);
+
+        $('#deleteTButton').show();
+        $('#deleteTButton').on('click', deleteTrans);
+
+        callServer('/api/transaction/' + getParameterValue('edit'), {}, function(transaction) {
+            // if there is a transaction at that id, load it
+            if(transaction) {
+                $('#transaction_amount').val(transaction.amount);
+
+                $('#transaction_category').val(transaction.cid);
+
+                $('#transaction_description').val(transaction.description);
+
+                $('#transaction_date').val(pullDate(transaction.date));
+                $('#transaction_time').val(pullTime(transaction.date));
+
+                if(transaction.amount < 0) {
+                    setExpense();
+                } else {
+                    setIncome();
+                }
+
+                activateJQueryPlugins();
+            }
+            else {
+                window.location = '/';
+            }
+        })
+    } else {
+        $('#sendTButton').on('click', sendTrans);
+    }
 })
 
 /**
@@ -100,15 +115,25 @@ function setAmountSign() {
  * send transactions to the server
  */
 function sendTrans() {
-	let timestamp = $('#transaction_date').val() + ' ' + $('#transaction_time').val();
+    let currentTime = new Date();
+    let time = $('#transaction_time').val();
+    time = (time != '') ? time : currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+	let timestamp = $('#transaction_date').val() + ' ' + time;
 	if(isNaN(Date.parse(timestamp))) {
-		timestamp = new Date().toString();
+		timestamp = currentTime.toString();
 	}
 
 	let category = $('#transaction_category').val();
 	if(!category) {
 		category = 0;
 	}
+
+    if($('#transaction_amount').val() == 0) {
+        $('#transaction_amount').addClass('invalid');
+        return;
+    } else {
+        $('#transaction_amount').removeClass('invalid');
+    }
 
     let payload = {
         amount: $('#transaction_amount').val(),
@@ -124,10 +149,9 @@ function sendTrans() {
 
     $('#sendTButton').text("Adding");
 
-    callServer('api/transaction/', options, function(res) {
+    callServer('/api/transaction/', options, function(res) {
         if (res.response != "Created") {
             $('#sendTButton').text("Error");
-            console.log(res);
             setTimeout(function() {
                 $('#sendTButton').text("Add")
             }, 2000);
@@ -135,4 +159,92 @@ function sendTrans() {
         	window.location = '/';
         }
     });
+}
+
+/**
+ * delete a transaction
+ * asking for confirmation
+ */
+function deleteTrans() {
+    let id = getParameterValue('edit');
+    if(id && window.confirm('Are you sure you want to delete this transaction? This action is irreversible!')) {
+        callServer('/api/transaction/' + id, {method: 'delete'}, function() {
+            window.location = '/';
+        })
+    }
+}
+
+/**
+ * save transaction
+ */
+function saveTrans() {
+    let currentTime = new Date();
+    let time = $('#transaction_time').val();
+    time = time != '' ? time : currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+    let timestamp = $('#transaction_date').val() + ' ' + time;
+    if(isNaN(Date.parse(timestamp))) {
+        timestamp = currentTime.toString();
+    }
+
+    let category = $('#transaction_category').val();
+    if(!category) {
+        category = 0;
+    }
+
+    let payload = {
+        amount: $('#transaction_amount').val(),
+        description: $('#transaction_description').val() ? $('#transaction_description').val() : ' ',
+        tdate: timestamp,
+        category: category,
+    };
+
+    let options = {
+        body: JSON.stringify(payload),
+        method: "POST"
+    }
+
+    $('#sendTButton').text("Saving");
+
+    callServer('/api/transaction/' + getParameterValue('edit'), options, function(res) {
+        if (res.response != "OK") {
+            $('#sendTButton').text("Error");
+            setTimeout(function() {
+                $('#sendTButton').text("Save")
+            }, 2000);
+        } else {
+            window.location = '/';
+        }
+    });
+}
+
+/**
+ * activate all JQuery plugins and reinitialize all inputs
+ */
+function activateJQueryPlugins() {
+    // activate the select jQuery plugin
+    $('select').material_select();
+
+    // activate the datepicker plugin
+    $('.datepicker').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Ok',
+        closeOnSelect: false // Close upon selecting a date,
+    });
+    // activate the timepicker plugin
+    $('.timepicker').pickatime({
+        default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+        fromnow: 0, // set default time to * milliseconds from now (using with default = 'now')
+        twelvehour: false, // Use AM/PM or 24-hour format
+        donetext: 'OK', // text for done-button
+        cleartext: 'Clear', // text for clear-button
+        canceltext: 'Cancel', // Text for cancel-button
+        autoclose: false, // automatic close timepicker
+        ampmclickable: true, // make AM PM clickable
+        aftershow: function() {} //Function for after opening timepicker
+    });
+
+    Materialize.updateTextFields();
 }

@@ -29,6 +29,23 @@ function getQueryString(field, url) {
 };
 
 /**
+ * Get the parameter value from an url string
+ * @param  {Location} location object
+ * @param  {String} parameter to search for
+ * @return {String} parameter value or undefined if not found
+ */
+function getParameterValue(param, path) {
+    path = !!path?path:location.pathname;
+    let parts = escape(path).split('/');
+    for (let i = 0; i < parts.length; i++) {
+        if (parts[i] == param && parts.length > i) {
+            return parts[i + 1];
+        }
+    }
+    return undefined;
+}
+
+/**
  * transform a json object into a query string
  * @param {Object} json the json object
  * @return {String} the query string
@@ -51,52 +68,54 @@ async function callServer(fetchURL, options, callback) {
     options = (typeof options === 'undefined') ? {} : options;
     callback = (typeof callback === 'undefined') ? () => {} : callback;
 
-    const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+    gapi.auth2.getAuthInstance().then(async function(ai) {
+        let token = ai.currentUser.get().getAuthResponse().id_token;
 
-    const fetchOptions = {
-        credentials: 'same-origin',
-        method: 'get',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-    };
-
-
-
-    Object.assign(fetchOptions, options);
-
-    // log the request
-    if (verbose) console.log(`Requested: ${fetchOptions.method.toUpperCase()} ${fetchURL}`);
-
-    const response = await fetch(fetchURL, fetchOptions);
-    if (!response.ok) {
-        // handle the error
-        console.log("Server error:\n" + response.status);
-        return;
-    }
-
-    // handle the response
-    let data = await response.text();
-    if (!data) {
-        data = JSON.stringify({
-            error: "error on fetch"
-        });
-    }
-
-    try {
-        data = JSON.parse(data);
-    } catch (err) {
-        data = {
-            response: data
+        const fetchOptions = {
+            credentials: 'same-origin',
+            method: 'get',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
         };
-    }
 
-    // log the results
-    if (verbose) console.log("Recieved: ", data);
 
-    callback(data);
+
+        Object.assign(fetchOptions, options);
+
+        // log the request
+        if (verbose) console.log(`Requested: ${fetchOptions.method.toUpperCase()} ${fetchURL}`);
+
+        const response = await fetch(fetchURL, fetchOptions);
+        if (!response.ok) {
+            // handle the error
+            console.log("Server error:\n" + response.status);
+            return;
+        }
+
+        // handle the response
+        let data = await response.text();
+        if (!data) {
+            data = JSON.stringify({
+                error: "error on fetch"
+            });
+        }
+
+        try {
+            data = JSON.parse(data);
+        } catch (err) {
+            data = {
+                response: data
+            };
+        }
+
+        // log the results
+        if (verbose) console.log("Recieved: ", data);
+
+        callback(data);
+    })
 }
 
 /**
@@ -108,7 +127,7 @@ function signIn() {
     $('.hide-on-signout').each(function(key, el) {
         el.style.display = 'block';
     })
-    callServer('api/user', {}, function(data) {
+    callServer('/api/user', {}, function(data) {
         // console.log(data);
     });
 }
@@ -127,7 +146,16 @@ async function signOut() {
  * redirects the user when the login at /login succeeds
  */
 function mainSignIn() {
-    window.location = "/";
+    callServer('/api/user', {}, function(data) {
+        if(data.response == 'Created') {
+            localStorage.isNewAccount = 'true';
+            window.location = '/settings';
+        }
+        else {
+            window.location = "/";
+        }
+    });
+    
 }
 
 /**
@@ -145,7 +173,7 @@ function getDetails(apiOptions = {}, callback) {
  * get the user's budget
  */
 function getBudget(callback) {
-    callServer('api/budget/', {}, function(data) {
+    callServer('/api/budget/', {}, function(data) {
         callback(data);
     });
 }
@@ -160,7 +188,7 @@ function setBudget(budget, callback) {
         budget: budget
     };
 
-    callServer('api/budget/', {
+    callServer('/api/budget/', {
         method: 'post',
         body: JSON.stringify(payload)
     }, function(data) {
@@ -173,7 +201,7 @@ function setBudget(budget, callback) {
  * @param {Object} payload transaction data
  */
 function addTransaction(payload) {
-    callServer('api/transaction/', {
+    callServer('/api/transaction/', {
         method: 'post',
         body: JSON.stringify(payload)
     }, function(data) {
@@ -253,14 +281,15 @@ function newRecEl(transaction) {
     anchor.appendChild(details);
 
     let date = newEl('small', {
-        textContent: transaction.date
+        textContent: pullDate(transaction.date) + ' ' + pullTime(transaction.date),
     });
     anchor.appendChild(date);
 
+    let transactionAmount = transaction.amount > 0 ? '£' + transaction.amount : '-£' + transaction.amount * -1;
     let transactionTextColour = transaction.amount > 0 ? 'green-text' : 'red-text';
     let amount = newEl('span', {
         classList: 'secondary-content text-accent-3 ' + transactionTextColour,
-        textContent: '£' + transaction.amount
+        textContent: transactionAmount
     });
     details.appendChild(amount);
 
@@ -309,9 +338,15 @@ function drawChart(inputData, title, container) {
     chart.draw(data, options);
 }
 
+/**
+ * parsing transactions data to be used in the google chart api
+ * @param  {Int} budget
+ * @param  {Array} transactions
+ * @return {Array} parsed array
+ */
 function calcTotals(budget, transactions) {
     let totals = {
-        remaining: budget > 0 ? budget : 0
+        Remaining: budget > 0 ? budget : 0
     }
 
     let chartData = [
@@ -319,11 +354,13 @@ function calcTotals(budget, transactions) {
     ];
 
     for (let i in transactions) {
-        if (totals[transactions[i].category]) {
-            totals[transactions[i].category] += transactions[i].amount;
-        } else {
+        if(!totals[transactions[i].category]) {
             totals[transactions[i].category] = 0;
-            totals[transactions[i].category] += transactions[i].amount;
+        }
+
+        totals[transactions[i].category] -= transactions[i].amount;
+        if(totals[transactions[i].category] < 0) {
+            totals[transactions[i].category] *= -1;
         }
     }
 
@@ -331,4 +368,31 @@ function calcTotals(budget, transactions) {
         chartData.push([k, totals[k]])
     });
     return chartData;
+}
+
+/**
+ * get the date part from a date object
+ * @param  {Date/String} date
+ * @return {String} date in mm/dd/yyyy format
+ */
+function pullDate(date) {
+    let d = new Date(date);
+
+    let day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+    let month = d.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let year = d.getFullYear();
+    return  month + '/' + day + '/' + year; 
+}
+
+/**
+ * get the time from a date object
+ * @param  {Date/String} date
+ * @return {String} time in HH:ii:ss format
+ */
+function pullTime(date) {
+    let d = new Date(date);
+    let hours = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+    let minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
+    return hours + ':' + minutes;
 }
