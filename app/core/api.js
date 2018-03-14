@@ -122,8 +122,7 @@ module.exports = function(app) {
                 AND YEAR(transaction.tdate) = ?`;
                 let month = req.query.month ? req.query.month : new Date().getMonth() + 1;
                 let year = req.query.year ? req.query.year : new Date().getFullYear();
-                let inserts = [user.id, month, year];
-                console.log(inserts);          
+                let inserts = [user.id, month, year];         
 
                 util.query(sql, inserts, function(results) {
                         res.status(200).send(results);
