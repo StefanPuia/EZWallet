@@ -72,8 +72,16 @@ app.get('/search', function(req, res) {
 
 /**
  * GET /edit
- * serve the edit page
+ * serve the add page
  */
 app.get('/edit', function(req, res) {
+    res.status(200).render('edit')
+})
+
+/**
+ * GET /edit/:id
+ * serve the edit page
+ */
+app.get('/edit/:id', function(req, res) {
     res.status(200).render('edit')
 })
