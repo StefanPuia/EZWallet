@@ -12,6 +12,7 @@ create table user (
 create table category (
   id int primary key auto_increment,
   cname varchar(20) not null,
+  colour varchar(20) not null,
   icon varchar(100)
 );
 
