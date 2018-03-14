@@ -19,11 +19,10 @@ create table category (
 create table transaction (
   id int primary key auto_increment,
   user int not null,
-  amount float not null,
+  amount decimal not null,
   description varchar(100),
   tdate date not null,
   category int not null,
-  image varchar(200),
   foreign key(category) references category(id),
   foreign key(user) references user(id)
 );
