@@ -43,7 +43,12 @@ module.exports = function(app) {
     app.get('/api/user', function(req, res) {
         util.findOrCreate(req.user, function(err, user) {
             if (err) {
-                console.log('Error: ' + err);
+                if(err === -1) {
+                    res.status(201).send('Created');
+                }
+                else {
+                    console.log('Error: ' + err);
+                }                
             } else if (user) {
                 res.status(200).json(user);
             } else {
@@ -61,11 +66,7 @@ module.exports = function(app) {
         util.getUserId(req.user, function(err, user) {
             id = user.id;
             util.query('SELECT budget FROM budget WHERE user = ? ORDER BY bdate DESC LIMIT 1', [id], function(results) {
-                if (results.length > 0) {
-                    res.status(200).json(results[0].budget);
-                } else {
-                    res.sendStatus(404);
-                }
+                res.status(200).json(results[0].budget);
             });
         });
     })
@@ -112,14 +113,14 @@ module.exports = function(app) {
         util.getUserId(req.user, function(err, user) {
             if (user) {
                 let sql = `SELECT 
-                transaction.amount, transaction.description, 
-                transaction.tdate AS date,
+                transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
                 category.cname AS category, category.icon, category.colour
                 FROM transaction 
-                INNER JOIN category ON transaction.category = category.id
+                INNER JOIN category 
+                    ON transaction.category = category.id
                 WHERE transaction.user = ? 
-                AND MONTH(transaction.tdate) = ?
-                AND YEAR(transaction.tdate) = ?`;
+                    AND MONTH(transaction.tdate) = ?
+                    AND YEAR(transaction.tdate) = ?`;
                 let month = req.query.month ? req.query.month : new Date().getMonth() + 1;
                 let year = req.query.year ? req.query.year : new Date().getFullYear();
                 let inserts = [user.id, month, year];         
@@ -167,7 +168,14 @@ module.exports = function(app) {
         util.getUserId(req.user, function(err, user) {
             if (user) {
                 let columns = ['id', 'amount', 'category', 'description', 'tdate', 'image']
-                util.query('SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?', [columns, 'transaction', 'id', req.params.id, 'user', user.id], function(results) {
+                util.query(`SELECT 
+                    transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
+                    category.cname AS category, category.icon, category.colour
+                    FROM transaction 
+                    INNER JOIN category 
+                        ON transaction.category = category.id
+                    WHERE transaction.id = ?
+                        AND transaction.user = ?`, [req.params.id, user.id], function(results) {
                     if (results.length > 0) {
                         res.status(200).send(results[0]);
                     } else {
