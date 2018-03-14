@@ -37,46 +37,10 @@ module.exports = function(app) {
     })
 
     /**
-     * GET /api/user
-     * get the current logged user details
-     */
-    app.get('/api/user/', function(req, res) {
-        util.findOrCreate(req.user, function(err, user) {
-            if (err) {
-                console.log()
-                res.sendStatus(500);
-            } else {
-                res.status(200).json(user);
-            }
-        });
-    })
-
-    /**
-     * GET /api/user/:id
-     * @param {Int} id  user id
-     * get the details of user with specified id
-     */
-    app.get('/api/user/:id', function(req, res) {
-        let columns = [];
-        Object.keys(req.query).forEach(function(key) {
-            if (req.query[key] == 'true') {
-                columns.push(key);
-            }
-        })
-        util.query('SELECT ?? FROM ?? WHERE ?? = ?', [columns, 'user', 'id', req.params.id], function(user) {
-            if (user.length > 0) {
-                res.status(200).json(user[0]);
-            } else {
-                res.sendStatus(404);
-            }
-        })
-    })
-
-    /**
      * POST /api/user/login
      * log the user in and send their details
      */
-    app.post('/api/user/login', function(req, res) {
+    app.get('/api/user', function(req, res) {
         util.findOrCreate(req.user, function(err, user) {
             if (err) {
                 console.log('Error: ' + err);
@@ -90,7 +54,7 @@ module.exports = function(app) {
 
     /**
      * GET /api/budget
-     * get the user budget
+     * get the latest user budget
      */
     app.get('/api/budget', function(req, res) {
         let id;
@@ -147,16 +111,19 @@ module.exports = function(app) {
     app.get('/api/transaction', function(req, res) {
         util.getUserId(req.user, function(err, user) {
             if (user) {
-                let sql = "select transaction.amount as Amount, transaction.description as Description, transaction.tdate as Date, category.cname as Category, transaction.image as Image from transaction inner join category on transaction.category = category.id";
-                let inserts;
-                //adds date filter if perameters are present
-                if (req.query.month == undefined || req.query.year == undefined) {
-                    sql += 'WHERE transaction.user = ?';
-                    inserts = [user.id];
-                } else {
-                    sql += ' WHERE transaction.user = ? AND MONTH(transaction.tdate) = ? AND YEAR(transaction.tdate) = ?';
-                    inserts = [user.id, req.query.month, req.query.year];
-                }
+                let sql = `SELECT 
+                transaction.amount, transaction.description, 
+                transaction.tdate AS date,
+                category.cname AS category, category.icon, category.colour
+                FROM transaction 
+                INNER JOIN category ON transaction.category = category.id
+                WHERE transaction.user = ? 
+                AND MONTH(transaction.tdate) = ?
+                AND YEAR(transaction.tdate) = ?`;
+                let month = req.query.month ? req.query.month : new Date().getMonth() + 1;
+                let year = req.query.year ? req.query.year : new Date().getFullYear();
+                let inserts = [user.id, month, year];
+                console.log(inserts);          
 
                 util.query(sql, inserts, function(results) {
                         res.status(200).send(results);
@@ -178,7 +145,7 @@ module.exports = function(app) {
                 //runs sql query if request has valid body values
                 if (util.resultValid(valiResult)) {
                     let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
-                    let values = [user.id, req.body.amount, req.body.description, req.body.tdate, req.body.category, req.body.image]
+                    let values = [user.id, req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image]
                     util.query('INSERT into transaction(??) values (?)', [columns, values], function(results) {
                         res.sendStatus(201);
                     });
