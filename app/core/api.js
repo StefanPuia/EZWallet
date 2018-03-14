@@ -66,7 +66,12 @@ module.exports = function(app) {
         util.getUserId(req.user, function(err, user) {
             id = user.id;
             util.query('SELECT budget FROM budget WHERE user = ? ORDER BY bdate DESC LIMIT 1', [id], function(results) {
-                res.status(200).json(results[0].budget);
+                if(typeof results[0] == 'undefined') {
+                    res.sendStatus(404);
+                }
+                else {
+                    res.status(200).json(results[0].budget);
+                }
             });
         });
     })

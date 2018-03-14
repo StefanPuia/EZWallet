@@ -67,16 +67,19 @@ module.exports.findOrCreate = function(profile, callback) {
                     email: profile.emails[0].value,
                     budget: 0
                 }
-                mysqlConnection.query('INSERT INTO user SET ?', user)
-                user.id = results.insertId;
+                mysqlConnection.query('INSERT INTO user SET ?', user, function(err, newUser) {
+                    user.id = newUser.insertId;
 
-                let budget = {
-                    user: user.id,
-                    bdate: new Date(),
-                    budget: 0
-                }
-                mysqlConnection.query('INSERT INTO budget SET ?', budget)
-                callback(-1, user);
+                    let budget = {
+                        user: user.id,
+                        bdate: new Date(),
+                        budget: 0
+                    }
+                    mysqlConnection.query('INSERT INTO budget SET ?', budget, function(err, newBudget) {
+                        callback(-1, user);
+                    })                    
+                })
+                
             } else {
                 callback(null, results[0]);
             }
