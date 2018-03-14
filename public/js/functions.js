@@ -345,7 +345,7 @@ function drawChart(inputData, title, container) {
  */
 function calcTotals(budget, transactions) {
     let totals = {
-        remaining: budget > 0 ? budget : 0
+        Remaining: budget > 0 ? budget : 0
     }
 
     let chartData = [
@@ -353,11 +353,13 @@ function calcTotals(budget, transactions) {
     ];
 
     for (let i in transactions) {
-        if (totals[transactions[i].category]) {
-            totals[transactions[i].category] += transactions[i].amount;
-        } else {
+        if(!totals[transactions[i].category]) {
             totals[transactions[i].category] = 0;
-            totals[transactions[i].category] += transactions[i].amount;
+        }
+
+        totals[transactions[i].category] -= transactions[i].amount;
+        if(totals[transactions[i].category] < 0) {
+            totals[transactions[i].category] *= -1;
         }
     }
 
