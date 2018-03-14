@@ -29,6 +29,23 @@ function getQueryString(field, url) {
 };
 
 /**
+ * Get the parameter value from an url string
+ * @param  {Location} location object
+ * @param  {String} parameter to search for
+ * @return {String} parameter value or undefined if not found
+ */
+function getParameterValue(param, path) {
+    path = !!path?path:location.pathname;
+    let parts = escape(path).split('/');
+    for (let i = 0; i < parts.length; i++) {
+        if (parts[i] == param && parts.length > i) {
+            return parts[i + 1];
+        }
+    }
+    return undefined;
+}
+
+/**
  * transform a json object into a query string
  * @param {Object} json the json object
  * @return {String} the query string
@@ -51,52 +68,54 @@ async function callServer(fetchURL, options, callback) {
     options = (typeof options === 'undefined') ? {} : options;
     callback = (typeof callback === 'undefined') ? () => {} : callback;
 
-    const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+    gapi.auth2.getAuthInstance().then(async function(ai) {
+        let token = ai.currentUser.get().getAuthResponse().id_token;
 
-    const fetchOptions = {
-        credentials: 'same-origin',
-        method: 'get',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-    };
-
-
-
-    Object.assign(fetchOptions, options);
-
-    // log the request
-    if (verbose) console.log(`Requested: ${fetchOptions.method.toUpperCase()} ${fetchURL}`);
-
-    const response = await fetch(fetchURL, fetchOptions);
-    if (!response.ok) {
-        // handle the error
-        console.log("Server error:\n" + response.status);
-        return;
-    }
-
-    // handle the response
-    let data = await response.text();
-    if (!data) {
-        data = JSON.stringify({
-            error: "error on fetch"
-        });
-    }
-
-    try {
-        data = JSON.parse(data);
-    } catch (err) {
-        data = {
-            response: data
+        const fetchOptions = {
+            credentials: 'same-origin',
+            method: 'get',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
         };
-    }
 
-    // log the results
-    if (verbose) console.log("Recieved: ", data);
 
-    callback(data);
+
+        Object.assign(fetchOptions, options);
+
+        // log the request
+        if (verbose) console.log(`Requested: ${fetchOptions.method.toUpperCase()} ${fetchURL}`);
+
+        const response = await fetch(fetchURL, fetchOptions);
+        if (!response.ok) {
+            // handle the error
+            console.log("Server error:\n" + response.status);
+            return;
+        }
+
+        // handle the response
+        let data = await response.text();
+        if (!data) {
+            data = JSON.stringify({
+                error: "error on fetch"
+            });
+        }
+
+        try {
+            data = JSON.parse(data);
+        } catch (err) {
+            data = {
+                response: data
+            };
+        }
+
+        // log the results
+        if (verbose) console.log("Recieved: ", data);
+
+        callback(data);
+    })
 }
 
 /**
@@ -108,7 +127,7 @@ function signIn() {
     $('.hide-on-signout').each(function(key, el) {
         el.style.display = 'block';
     })
-    callServer('api/user', {}, function(data) {
+    callServer('/api/user', {}, function(data) {
         // console.log(data);
     });
 }
@@ -145,7 +164,7 @@ function getDetails(apiOptions = {}, callback) {
  * get the user's budget
  */
 function getBudget(callback) {
-    callServer('api/budget/', {}, function(data) {
+    callServer('/api/budget/', {}, function(data) {
         callback(data);
     });
 }
@@ -160,7 +179,7 @@ function setBudget(budget, callback) {
         budget: budget
     };
 
-    callServer('api/budget/', {
+    callServer('/api/budget/', {
         method: 'post',
         body: JSON.stringify(payload)
     }, function(data) {
@@ -173,7 +192,7 @@ function setBudget(budget, callback) {
  * @param {Object} payload transaction data
  */
 function addTransaction(payload) {
-    callServer('api/transaction/', {
+    callServer('/api/transaction/', {
         method: 'post',
         body: JSON.stringify(payload)
     }, function(data) {
@@ -331,4 +350,14 @@ function calcTotals(budget, transactions) {
         chartData.push([k, totals[k]])
     });
     return chartData;
+}
+
+function pullDate(date) {
+    let d = new Date(date);
+    return d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear(); 
+}
+
+function pullTime(date) {
+    let d = new Date(date);
+    return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 }

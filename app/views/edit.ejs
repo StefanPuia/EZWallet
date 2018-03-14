@@ -3,10 +3,10 @@
 	<%- include("partials/head") %>
 	<body>
 		<%- include("partials/header") %>
-		<script src="public/js/edit.js"></script>
+		<script src="/public/js/edit.js"></script>
 		<main>
 			<div class="container center-align">
-				<h3>Add record</h3>
+				<h3 id="page-title">Add record</h3>
 				<div class="row">
 					<button id="transaction_set_income" class="btn col s6 green accent-2 white-text">INCOME</button>
 					<button id="transaction_set_expense" class="btn col s6 green accent-4 white-text">EXPENSE</button>
@@ -57,7 +57,8 @@
 						</div>
 						<div class="row">
 							<div class="input-field col s12">
-								<button id="sendTButton" type="button" class="btn green accent-4" onclick="sendTrans()">Add</button>
+								<button id="sendTButton" type="button" class="btn green accent-4">Add</button>
+								<button id="deleteTButton" type="button" class="hidden btn red accent-4">Delete</button>
 							</div>
 						</div>
 					</form>
