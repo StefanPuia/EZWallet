@@ -48,7 +48,7 @@ module.exports = function(app) {
                 }
                 else {
                     console.log('Error: ' + err);
-                }                
+                }
             } else if (user) {
                 res.status(200).json(user);
             } else {
@@ -117,18 +117,18 @@ module.exports = function(app) {
     app.get('/api/transaction', function(req, res) {
         util.getUserId(req.user, function(err, user) {
             if (user) {
-                let sql = `SELECT 
+                let sql = `SELECT
                 transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
                 category.id AS cid, category.cname AS category, category.icon, category.colour
-                FROM transaction 
-                INNER JOIN category 
+                FROM transaction
+                INNER JOIN category
                     ON transaction.category = category.id
-                WHERE transaction.user = ? 
+                WHERE transaction.user = ?
                     AND MONTH(transaction.tdate) = ?
                     AND YEAR(transaction.tdate) = ?`;
                 let month = req.query.month ? req.query.month : new Date().getMonth() + 1;
                 let year = req.query.year ? req.query.year : new Date().getFullYear();
-                let inserts = [user.id, month, year];         
+                let inserts = [user.id, month, year];
 
                 util.query(sql, inserts, function(results) {
                         res.status(200).send(results);
@@ -149,8 +149,8 @@ module.exports = function(app) {
                 let valiResult = util.validateTrans(req);
                 //runs sql query if request has valid body values
                 if (util.resultValid(valiResult)) {
-                    let columns = ['user', 'amount', 'description', 'tdate', 'category', 'image']
-                    let values = [user.id, req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image]
+                    let columns = ['user', 'amount', 'description', 'tdate', 'category']
+                    let values = [user.id, req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category]
                     util.query('INSERT into transaction(??) values (?)', [columns, values], function(results) {
                         res.sendStatus(201);
                     });
@@ -173,11 +173,11 @@ module.exports = function(app) {
         util.getUserId(req.user, function(err, user) {
             if (user) {
                 let columns = ['id', 'amount', 'category', 'description', 'tdate', 'image']
-                util.query(`SELECT 
+                util.query(`SELECT
                     transaction.id, transaction.amount, transaction.description, transaction.tdate AS date,
                     category.id AS cid, category.cname AS category, category.icon, category.colour
-                    FROM transaction 
-                    INNER JOIN category 
+                    FROM transaction
+                    INNER JOIN category
                         ON transaction.category = category.id
                     WHERE transaction.id = ?
                         AND transaction.user = ?`, [req.params.id, user.id], function(results) {
@@ -203,9 +203,9 @@ module.exports = function(app) {
                 let valiResult = util.validateTrans(req);
                 //runs sql query if request has valid body values
                 if (util.resultValid(valiResult)) {
-                    let inserts = [req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.body.image, req.params.id, user.id]
-                    util.query(`UPDATE transaction 
-                            SET amount = ?, description = ?, tdate = ?, category = ?, image = ?
+                    let inserts = [req.body.amount, req.body.description, new Date(req.body.tdate), req.body.category, req.params.id, user.id]
+                    util.query(`UPDATE transaction
+                            SET amount = ?, description = ?, tdate = ?, category = ?
                             WHERE id = ? AND user = ?`, inserts, function(results) {
                         res.sendStatus(200);
                     });
