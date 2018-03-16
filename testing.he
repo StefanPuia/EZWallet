@@ -1,0 +1,90 @@
+"""
+Helium Automated Testing
+Test file for EZWallet
+"""
+
+start_chrome("localhost:8080")
+
+#### 1. LOGIN ####
+
+# 1.0 logged out users should be redirected to login page
+if not Text("Log In").exists():
+	print "Error: 1.0"
+	kill_browser()
+ 
+# 1.1 first login should redirect to the settings page
+click("Sign in with Google")
+if not Text("Dashboard").exists():
+	print "Error: 1.1"
+	kill_browser()
+
+# 1.2 logout
+click("Log Out")
+if not Text("Log In").exists():
+	print "Error: 1.2"
+	kill_browser()
+
+# 1.3 login after logout without changing the budget 
+# should redirect to the settings page
+click("Log In")
+click("Sign in with Google")
+if not Text("Dashboard").exists():
+	print "Error: 1.3"
+	kill_browser()
+
+# 1.4 setting the budget should redirect to the dashboard
+write("150", into="Budget")
+click("Save")
+if not Text("Dashboard").exists():
+	print "Error: 1.4"
+	kill_browser()
+
+# 1.5 logout
+click("Log Out")
+if not Text("Log In").exists():
+	print "Error: 1.5"
+	kill_browser()
+
+# 1.6 login after setting the budget should redirect to the dashboard
+click("Log In")
+click("Sign in with Google")
+if not Text("Dashboard").exists():
+	print "Error: 1.6"
+	kill_browser()
+
+
+#### 2. Settings ####
+click("Settings")
+
+# 2.0 setting the budget should redirect to dashboard
+write("250", into="Budget")
+click("Save")
+if not Text("Dashboard").exists():
+	print "Error: 2.0"
+	kill_browser()
+
+
+#### 3. Transactions ####
+click("Add")
+
+# 3.0 amount of 0 should not be allowed and should not redirect the user to Dashboard
+write("0", into="Amount")
+click("Add")
+if Text("Dashboard").exists():
+	print "Error: 3.0"
+	kill_browser()
+
+# 3.1 a valid amount should redirect the user to Dashboard and the record should be
+# the first one displayed
+click("Expense")
+write("15", into="Amount")
+click("Select a category")
+click("Groceries")
+write("ASDA", into="Description")
+click("Add")
+if not Text("Dashboard").exists() and not Text("ASDA").exists() and not Text("Groceries").exists():
+	print "Error: 3.1"
+	kill_browser()
+
+
+print "Success"
